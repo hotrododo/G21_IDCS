@@ -17,7 +17,7 @@ html {
     background-size: 100% 100%;
 }
 .user_card {
-    height: 400px;
+    height: 615px;
     width: 350px;
     margin-top: auto;
     margin-bottom: auto;
@@ -56,19 +56,9 @@ html {
     padding: 0 2rem;
 }
 .input-group-text {
+    max-width: 35.44px;
     background: #c0392b !important;
     color: white !important;
     border: 0 !important;
     border-radius: 0.25rem 0 0 0.25rem !important;
-}
-.notif_div{
-    height: 28px;
-    width: 218px;
-    margin-top: 60px !important;
-    
-}
-.notif_div .p {
-    font-size: 20px;
-    color: red;
-    font-style: italic;
 }

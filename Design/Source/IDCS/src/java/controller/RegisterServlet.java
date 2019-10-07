@@ -5,20 +5,18 @@
  */
 package controller;
 
-import entities.UserBean;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author macbook
  */
-public class LoginServlet extends HttpServlet {
+public class RegisterServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +35,10 @@ public class LoginServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");            
+            out.println("<title>Servlet RegisterServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RegisterServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,6 +56,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**
@@ -72,25 +71,21 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            Boolean isValid = null;
-            String username = "IDCS";
-            String password = "123456";
-            UserBean user = new UserBean();
-            user.setUsername(request.getParameter("username"));
-            user.setPassword(request.getParameter("password"));
-            //check username and password
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                isValid = true;
-                HttpSession session =  request.getSession(true);
-                session.setAttribute("currentUser", user); //set user to session
-                request.getRequestDispatcher("Home.jsp").forward(request, response); //logged in and go to Home page 
+            String notif;
+            String fullname = request.getParameter("fullname");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            String password = request.getParameter("password");
+            String repassword = request.getParameter("repassword");
+            if (password.equals(repassword)) {
+                request.setAttribute("fullname", fullname);
+                notif = "Create successful! Wait admin contact";
             }else{
-                request.setAttribute("notif", "Login Fail!!!");
-                request.setAttribute("isValid", isValid);
-                request.setAttribute("user", user);
-                request.getRequestDispatcher("login.jsp").forward(request, response); //login fail and back to login page
+                notif = "Please enter passsword again!";
+                request.setAttribute("warning", "alert alert-warning");
             }
-            
+            request.setAttribute("notif", notif);
+            request.getRequestDispatcher("Register.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,5 +101,4 @@ public class LoginServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    
 }
