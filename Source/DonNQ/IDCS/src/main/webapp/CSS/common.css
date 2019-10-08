@@ -1,0 +1,215 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Oct 6, 2019, 7:56:57 PM
+    Author     : mac
+*/
+body, html {
+    height: 100%;
+    overflow: hidden;
+}
+.bg {
+    background-image: url("../IMG/dark-blur-abstract-4k-v3.jpg");
+    background-repeat: no-repeat;
+    background-position: right top;
+    background-attachment: inherit;
+    background-size: 100% 100%;
+    display: compact;
+    height: 100%;
+    color: whitesmoke;
+}
+.menu_bar {
+    margin-left: 0;
+    margin-top: 0;
+    
+}
+
+.logo {
+    margin-left: 0pt;
+    margin-top: 0pt;
+    max-height: 80pt;
+    max-width: 340pt;
+    border: 1pt;
+    border-style: groove;
+    color: red;
+    display: inline-block;
+    width: 100%;
+}
+
+.user_content {
+    margin-left: 0;
+    margin-top: 0;
+    float: right;
+    max-height: 55pt;
+    max-width: 150pt;
+    border-style: groove;
+    border-radius: 50pt;
+    border: 3px solid #fff;
+    display: inline-block;
+    height: 100%;
+}
+
+.icon_user {
+    max-width: 30pt;
+    display: inline-block;
+    width: 100%;
+    float: left;
+    margin: 1pt 1pt 1pt;
+}
+.user_name {
+    max-width: 120pt;
+    display: inline-block;
+    float: left;
+    width: 85pt;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  width: 120px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 2;
+  padding-top: 2pt;
+  
+}
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {
+  font-size: 16px;  
+  border: none;
+  outline: none;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+  color: whitesmoke;
+  width: 100%;
+}
+.dropdown-content a {
+  float: right;
+  width: 100%;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  color: whitesmoke;
+  background-color: lightslategrey;
+  border-bottom: 1px solid #e6e8ea;
+  border-radius: 50pt;
+  margin-top: 2pt;
+}
+.dropdown-content i {
+    float: left;
+    width: 28pt;
+    display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: slategrey;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+.content_layout {
+}
+
+
+.execute_content {
+    max-height: 200pt;
+    height: 200pt;
+    border-bottom-style: groove;
+    border-bottom-color: red;
+    
+}
+
+.input-area {
+    max-height: 40pt;
+    max-width: 450pt;
+    padding-top: 100pt;
+    padding-left: 30%;
+}
+
+.txt_input_domain {
+    height: 40pt;
+    width: 450pt;
+    background-image: url("../IMG/input-layout.png");
+    background-size: 100% 100%;
+    display: inline-block;
+}
+
+.txt_input{
+    height: 100%;
+    width: 340pt;
+    background-color: transparent;
+    border: none;
+    font-family: sans-serif;
+    font-size: 15pt;
+    padding-left: 10pt;
+    color: white;
+    float: left;
+    outline: none;
+}
+
+.btn-domain {
+    height: 100%;
+    width: 80pt;
+    display: inline-block;
+    background-color: transparent;
+    border: none;
+    float: right;
+    outline: none;
+}
+.ext_func {
+    background-color: whitesmoke;
+    min-height: 350pt;
+    width: 100%;
+    color: black;
+}
+
+.table-func {
+    min-width: 100%;
+    padding: 20pt 30pt 20pt 30pt;
+    border-collapse: separate;
+    border-spacing: 30pt 1pt;
+    table-layout: fixed;
+}
+
+.td-domain-name {
+    text-align: center;
+    height: 30pt;
+    font-size: 14pt;
+    color: red;
+    border-top: 1pt ridge #e6e8ea;
+    border-left: 1pt ridge #e6e8ea;
+    border-right: 1pt ridge #e6e8ea;
+    padding: 10pt 20pt 10pt 20pt;
+    margin: 10pt 20pt 10pt 20pt;
+    
+}
+
+.td-domain-service {
+    text-align: left;
+    height: 130pt;
+    padding: 5pt 20pt 5pt 20pt;
+    font-size: 12pt;
+    vertical-align: text-top;
+    border-left: 1pt ridge #e6e8ea;
+    border-right: 1pt ridge #e6e8ea;
+    border-bottom: 1pt ridge #e6e8ea;
+    
+}
+
+th {
+    height: 100pt;
+    font-size: 16pt;
+}
+td {
+    max-width: 70pt;
+}
+
