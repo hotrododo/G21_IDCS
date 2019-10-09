@@ -93,15 +93,15 @@ public class loginServlet extends HttpServlet {
                 HttpSession newSession = request.getSession(true);
 
                 //setting session to expiry in 5 mins
-                newSession.setMaxInactiveInterval(5 * 60);
+                newSession.setMaxInactiveInterval(1 * 60);
                 newSession.setAttribute("currentUser", user.getUsername()); //set user to session
 
                 Cookie currentUser = new Cookie("currentUser",user.getUsername());
-                currentUser.setMaxAge(5*60);
+                currentUser.setMaxAge(1*60);
                 currentUser.setSecure(true);
                 currentUser.setHttpOnly(true);
                 response.addCookie(currentUser);
-                request.getRequestDispatcher(request.getContextPath()+ "/Home.jsp").forward(request, response); //logged in and go to Home page 
+                response.sendRedirect("Home.jsp");//logged in and go to Home page
             } else {
                 request.setAttribute("notif", CONSTANT.NOTIF_LOGIN_FAIL);
                 request.setAttribute("isValid", CONSTANT.isValid_Yes);

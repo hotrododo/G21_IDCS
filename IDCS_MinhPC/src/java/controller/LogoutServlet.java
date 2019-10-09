@@ -72,22 +72,14 @@ public class LogoutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String logout = request.getParameter("logout");
-            if (logout != null) {
-                if (logout.equals("ok")) {
-                    //invalidate the session if exists
-                    HttpSession session = request.getSession(false);
-                    if (session != null) {
-                        session.invalidate();
-                    }
-                    request.removeAttribute("currentUser"); //remove cookie
-                }
-            }
-
+            //invalidate the session if exists
+            HttpSession session = request.getSession();
+            session.invalidate();
+            System.out.println("SessionAAA: " + session.getId());
+            response.sendRedirect("login.jsp");
         } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        request.getRequestDispatcher(request.getContextPath()+ "/login.jsp").forward(request, response);
     }
 
     /**
