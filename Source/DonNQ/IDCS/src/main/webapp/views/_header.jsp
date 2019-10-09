@@ -4,12 +4,19 @@
     Author     : mac
 --%>
 
+<%@page import="com.cstcopyright.idcs.untils.MyUtils"%>
+<%@page import="com.cstcopyright.idcs.beans.UserAccount"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <div class="menu_bar">
     <div class="logo">
         <h1>This is Logo area</h1>
     </div>
-    <div class="user_content">
+    <%
+    HttpSession ss = request.getSession();
+    UserAccount loginedUser = MyUtils.getLoginedUser(session);
+    if(loginedUser!=null){%>
+        <div class="user_content">
         <div class="icon_user">
             <img class="icon_user" src="../${pageContext.request.contextPath}/IMG/avatar.png" alt="User Avatar">
         </div>
@@ -26,4 +33,6 @@
             </div>
         </div>
     </div>
+    <%}%>
+    
 </div>

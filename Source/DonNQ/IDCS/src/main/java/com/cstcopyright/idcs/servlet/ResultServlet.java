@@ -5,10 +5,14 @@
  */
 package com.cstcopyright.idcs.servlet;
 
+import com.cstcopyright.idcs.beans.DomainScan;
 import com.cstcopyright.idcs.beans.UserAccount;
+import com.cstcopyright.idcs.data.ForgeData;
 import com.cstcopyright.idcs.untils.MyUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +23,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author mac
  */
-public class SignOutServlet extends HttpServlet {
+public class ResultServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,16 +36,26 @@ public class SignOutServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         HttpSession session = request.getSession();
 
         // Check User has logged on
         UserAccount loginedUser = MyUtils.getLoginedUser(session);
-        //clear session
-        session.invalidate();
-        MyUtils.deleteUserCookie(response);
-        // Redirect to login page.
-        response.sendRedirect(request.getContextPath() + "/login");
+
+        // Not logged in
+        if (loginedUser == null) {
+            // Redirect to login page.
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        //scan history
+        ArrayList<DomainScan> list = ForgeData.getDomainList();
+        // Store info to the request attribute before forwarding.
+        request.setAttribute("user", loginedUser);
+        request.setAttribute("list", list);
+        // If the user has logged in, then forward to the page
+        // /WEB-INF/views/userInfoView.jsp
+        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/views/resultView.jsp");
+        dispatcher.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -12,17 +12,21 @@
         <title>Internet-connected Checking System</title>
         <link rel="stylesheet" type="text/css" href="../${pageContext.request.contextPath}/CSS/common.css"/>
         <script src="https://kit.fontawesome.com/1956e41869.js" crossorigin="anonymous"></script>
+        <script src="../JS/javascript.js" crossorigin="anonymous"></script>
     </head>
     <body class="bg">
+        
         <jsp:include page="_header.jsp"></jsp:include>
         <div class="content_layout">
             <div class="execute_content">
-                <div class="input-area">
+                <form method="POST" action="result" onsubmit="return frmValidate()">
+                    <div class="input-area">
                     <div class="txt_input_domain">
-                        <input class="txt_input" placeholder="Enter your site..."/>
-                        <button class="btn-domain"></button>
+                        <input class="txt_input" name="frmDomain" placeholder="Enter your site..."/>
+                        <button class="btn-domain" type="submit" value="Submit"></button>
                     </div>
                 </div>
+                </form>
             </div>
             <div class="ext_func">
                 <table class="table-func">
