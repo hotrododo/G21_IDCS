@@ -42,7 +42,7 @@ public class DBUtil {
 
     private User getUserInfo(User user) {
 
-        String strSQLCommand = "SELECT * from user where username like ?";
+        String strSQLCommand = "SELECT * from userinfo where username like ?";
         try {
             Connection connection = DBContext.getInstance().GetConnection();
             PreparedStatement ps = connection.prepareStatement(strSQLCommand);
