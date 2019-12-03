@@ -1,0 +1,108 @@
+{
+    "nmap": {
+      "command_line": "nmap -oX - -sV -p 21,25,80,143,110,443,1883 141.101.220.172",
+      "scaninfo": {
+        "tcp": {
+          "method": "syn",
+          "services": "21,25,80,110,143,443,1883"
+        }
+      },
+      "scanstats": {
+        "timestr": "Fri Nov 22 16:11:56 2019",
+        "elapsed": "157.90",
+        "uphosts": "1",
+        "downhosts": "0",
+        "totalhosts": "1"
+      }
+    },
+    "scan": {
+      "141.101.220.172": {
+        "hostnames": [
+          {
+            "name": "141.101.220.172.leadertelecom.ru",
+            "type": "PTR"
+          }
+        ],
+        "addresses": {
+          "ipv4": "141.101.220.172"
+        },
+        "vendor": {},
+        "status": {
+          "state": "up",
+          "reason": "syn-ack"
+        },
+        "tcp": {
+          "21": {
+            "state": "open",
+            "reason": "syn-ack",
+            "name": "ftp",
+            "product": "",
+            "version": "",
+            "extrainfo": "",
+            "conf": "3",
+            "cpe": ""
+          },
+          "25": {
+            "state": "open",
+            "reason": "syn-ack",
+            "name": "smtp",
+            "product": "Microsoft Exchange smtpd",
+            "version": "",
+            "extrainfo": "",
+            "conf": "10",
+            "cpe": "cpe:/o:microsoft:windows"
+          },
+          "80": {
+            "state": "open",
+            "reason": "syn-ack",
+            "name": "http-proxy",
+            "product": "Kerio Control http proxy",
+            "version": "",
+            "extrainfo": "",
+            "conf": "10",
+            "cpe": "cpe:/a:kerio:control"
+          },
+          "110": {
+            "state": "open",
+            "reason": "syn-ack",
+            "name": "pop3",
+            "product": "",
+            "version": "",
+            "extrainfo": "",
+            "conf": "10",
+            "cpe": ""
+          },
+          "143": {
+            "state": "open",
+            "reason": "syn-ack",
+            "name": "imap",
+            "product": "Microsoft Exchange 2007-2010 imapd",
+            "version": "",
+            "extrainfo": "",
+            "conf": "10",
+            "cpe": "cpe:/o:microsoft:windows"
+          },
+          "443": {
+            "state": "open",
+            "reason": "syn-ack",
+            "name": "http",
+            "product": "Microsoft IIS httpd",
+            "version": "10.0",
+            "extrainfo": "",
+            "conf": "10",
+            "cpe": "cpe:/o:microsoft:windows"
+          },
+          "1883": {
+            "state": "open",
+            "reason": "syn-ack",
+            "name": "mosquitto version 1.4.12",
+            "product": "",
+            "version": "",
+            "extrainfo": "",
+            "conf": "10",
+            "cpe": ""
+          }
+        }
+      }
+    }
+  }
