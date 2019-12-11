@@ -7,6 +7,7 @@ package CSTCopyright.IDCS.data;
 
 import CSTCopyright.IDCS.controller.DomainScan;
 import CSTCopyright.IDCS.controller.UserAccount;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -31,7 +32,7 @@ public class ForgeData {
         user.setPassword("admin");
         user.setEmailAddress("admin@cstcopyright.com");
         user.setGender(true);
-        user.setExpiryDate(90);
+        user.setExpiryDate(Date.valueOf("2020-11-11"));
         user.setUserType(1);
         user.setPhoneNumber("0358008828");
         user.setUseCount(0);
@@ -42,7 +43,7 @@ public class ForgeData {
         user1.setPassword("donnq");
         user1.setEmailAddress("donnq@cstcopyright.com");
         user1.setGender(true);
-        user1.setExpiryDate(90);
+        user1.setExpiryDate(Date.valueOf("2020-11-11"));
         user1.setUserType(2);
         user1.setPhoneNumber("0358008828");
         user1.setUseCount(0);
@@ -53,7 +54,7 @@ public class ForgeData {
         user2.setPassword("minhpc");
         user2.setEmailAddress("minhpc@cstcopyright.com");
         user2.setGender(true);
-        user2.setExpiryDate(0);
+        user2.setExpiryDate(Date.valueOf("2019-11-11"));
         user2.setUserType(2);
         user2.setPhoneNumber("0969307911");
         user2.setUseCount(0);

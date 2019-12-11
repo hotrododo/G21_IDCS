@@ -8,14 +8,10 @@ package CSTCopyright.IDCS.servlet;
 import CSTCopyright.IDCS.controller.DomainScan;
 import CSTCopyright.IDCS.controller.UserAccount;
 import CSTCopyright.IDCS.data.ForgeData;
-import CSTCopyright.IDCS.utils.FBUtils;
+//import CSTCopyright.IDCS.utils.FBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -53,12 +49,12 @@ public class HomeServlet extends HttpServlet {
         }
         //scan history
         ArrayList<DomainScan> list = ForgeData.getDomainList();
-        try {
-            //test
-            boolean test = FBUtils.addAccount(loginedUser);
-        } catch (InterruptedException | ExecutionException ex) {
-            Logger.getLogger(HomeServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            //test
+//            boolean test = FBUtils.addAccount(loginedUser);
+//        } catch (InterruptedException | ExecutionException ex) {
+//            Logger.getLogger(HomeServlet.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         // Store info to the request attribute before forwarding.
         request.setAttribute("user", loginedUser);
         request.setAttribute("list", list);
@@ -94,7 +90,8 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String userName = request.getParameter("frmDomain");
+        
     }
 
     /**

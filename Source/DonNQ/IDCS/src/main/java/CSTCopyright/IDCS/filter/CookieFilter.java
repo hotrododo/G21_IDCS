@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
  * @author mac
  */
 
-@WebFilter(filterName = "cookieFilter", urlPatterns = { "/*" })
+@WebFilter(filterName = "CookieFilter", urlPatterns = { "/*" })
 public class CookieFilter implements Filter{
 
     public CookieFilter() {
@@ -59,12 +59,8 @@ public class CookieFilter implements Filter{
         String checked = (String) session.getAttribute("COOKIE_CHECKED");
         if (checked == null && conn != null) {
             String userName = MyUtils.getUserNameInCookie(req);
-            try {
-                UserAccount user = DBUtils.findUser(conn, userName);
-                MyUtils.storeLoginedUser(session, user);
-            } catch (SQLException ex) {
-                Logger.getLogger(CookieFilter.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            UserAccount user = DBUtils.findUser(conn, userName);
+            MyUtils.storeLoginedUser(session, user);
             // Mark checked Cookies.
             session.setAttribute("COOKIE_CHECKED", "CHECKED");
         }

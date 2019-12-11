@@ -6,9 +6,10 @@
 package CSTCopyright.IDCS.servlet;
 
 import CSTCopyright.IDCS.controller.UserAccount;
-import CSTCopyright.IDCS.data.ForgeData;
+import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
+import java.sql.Connection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,6 +28,7 @@ public class LoginServlet extends HttpServlet {
     public LoginServlet() {
         super();
     }
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -86,11 +88,11 @@ public class LoginServlet extends HttpServlet {
             hasError = true;
             errorString = "Required username and password!";
         } else {
-//            Connection conn = MyUtils.getStoredConnection(request);
+            Connection conn = MyUtils.getStoredConnection(request);
             // Find the user in the DB.
-            user = ForgeData.getUserFake(userName, password);
-//                user = DBUtils.findUser(conn, userName, password);
-            if (user == null) {
+//            user = ForgeData.getUserFake(userName, password);
+            user = DBUtils.findUser(conn, userName);
+            if (user == null || !user.getPassword().equals(password)) {
                 hasError = true;
                 errorString = "User Name or password invalid";
             }

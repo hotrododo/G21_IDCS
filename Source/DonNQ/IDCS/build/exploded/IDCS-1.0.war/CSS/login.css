@@ -72,3 +72,15 @@ html {
     color: red;
     font-style: italic;
 }
+.page_login{
+    background-image: url("../IMG/bg_login.jpg");
+    background-repeat: no-repeat;
+    background-position: right top;
+    background-attachment: inherit;
+    background-size: 100% 100%;
+    display: compact;
+    height: 100%;
+    color: whitesmoke;
+    
+    z-index: 1;
+}

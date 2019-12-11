@@ -14,52 +14,53 @@
         <script src="https://kit.fontawesome.com/1956e41869.js" crossorigin="anonymous"></script>
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/login.css">
+        <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/style.css">
+        <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/mobie-css.css">
+        <link rel="icon" type="image/png" href="../${pageContext.request.contextPath}/IMG/favicon.png">
+        <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/bootstrap/bootstrap.min.css">
+        <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/fontawesome-free/css/all.min.css">
     </head>
-    <body class="bg">
-        <jsp:include page="_header.jsp"></jsp:include>
-        <div class="content_layout">
-            <div class="container h-100">
-                <div class="d-flex justify-content-center h-100">
-                    <div class="d-flex justify-content-center form_container" >
-                        <div class="user_card">
-                            <form method="POST" action="login">
-                                <div class="form-group input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-                                    </div>
-                                    <input value="${user.userName}" name="userName" class="form-control" placeholder="username" type="text" required>
-                                </div> <!-- form-group// -->
-                                <div class="form-group input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-                                    </div>
-                                    <input value="${user.password}" name="password"class="form-control" placeholder="password" type="password" required>
-                                </div>
-                                
-
-                                <div class="form-group">
-                                    <input value="Log in" type="submit" value= "Submit" class="btn btn-primary btn-block">
-                                </div>    
-                                <div class="mt-4">
-                                    <div class="d-flex justify-content-center links">
-                                        Don't have an account? <a href="Register.jsp" class="ml-2">Sign Up</a>
-                                    </div>
-                                    <div class="d-flex justify-content-center links">
-                                        <a href="#">Forgot your password?</a>
-                                    </div>
-                                    <input type="checkbox" name="rememberMe" value= "Y" />
-                                    <a>${errorString}</a>
-                                </div>                                                                
-                            </form>
-
-                        </div>
-                    </div> 
+    <body class="page_login">
+            <main>
+                <div class="login_form">
+                    <div class="logo">
+                        <a href="/" title="IDCS">
+                            <img src="../${pageContext.request.contextPath}/IMG/logo_idcs.png" alt="logo" srcset="">
+                    </a>
                 </div>
+                <div class="title-login">
+                    <h1>LOGIN TO IDCS</h1>
+                </div>
+                <form action="login" method="POST" class="needs-validation">
+                    <div class="form-group">
+                        <label class="login-input" for="uname"><i class="fas fa-user-circle"></i></label>
+                        <input type="text" class="form-control" id="uname" placeholder="Enter username" value="${user.userName}" name="userName" required>
+                        <div class="notifi-input valid-feedback">Valid.</div>
+                        <div class="notifi-input invalid-feedback">Please fill out this field.</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="login-input" for="pwd"><i class="fas fa-lock"></i></label>
+                        <input type="password" class="form-control" value="${user.password}" name="password" placeholder="Enter password" id="password" required>
+
+                        <div class="notifi-input valid-feedback">Valid.</div>
+                        <div class="notifi-input invalid-feedback">Please fill out this field.</div>
+                    </div>
+                    <p style="color: red;">${errorString}</p>
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" name="remember" value= "Y"> Remember me
+                        </label>
+                        <a href="forgot-password.html" class="forgot" title="Forgot Password">Forgot Password ?</a>
+                    </div>
+                    <div>
+                        <p><i class="fas fa-info-circle"></i> Don't have an account? <a href="registration.html">Sign Up</a></p>
+                    </div>
+                    <button type="submit" class="btn btn-primary submit_login">LOGIN</button>
+                </form>
             </div>
 
-        </div>
-
+        </main>
     </body>
 </html>

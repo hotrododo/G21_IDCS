@@ -9,24 +9,13 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <div class="menu_bar">
-    <div class="logo">
-        <h1>This is Logo area</h1>
+    <div class="col-sm-6 col-md-6">
+        <div class="menu-logo-header">
+            <a href="/" title="IDCS">
+                <img class="logo-header" src="../${pageContext.request.contextPath}/IMG/logo_idcs.png" alt="logo" srcset="">
+            </a>
+        </div>
     </div>
-    <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
-
-    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-    <script src="/__/firebase/7.2.3/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
-    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
-    <script src="/__/firebase/7.2.3/firebase-analytics.js"></script>
-
-    <!-- Add Firebase products that you want to use -->
-    <script src="/__/firebase/7.2.3/firebase-auth.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
-
-    <script src="/__/firebase/7.2.3/firebase-firestore.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
-
     <%
         HttpSession ss = request.getSession();
         UserAccount loginedUser = MyUtils.getLoginedUser(session);

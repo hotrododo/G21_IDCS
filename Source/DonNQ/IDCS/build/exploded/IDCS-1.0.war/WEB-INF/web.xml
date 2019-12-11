@@ -41,18 +41,31 @@
         <welcome-file>login</welcome-file>
         
     </welcome-file-list>
-    <filter>
-        <filter-name>LoginFilter</filter-name> <!-- mandatory -->
-        <filter-class>CSTCopyright.IDCS.filter.LoginFilter</filter-class> <!-- mandatory -->
-        <init-param> <!-- optional -->
+<!--    <filter>
+        <filter-name>LoginFilter</filter-name>  mandatory 
+        <filter-class>CSTCopyright.IDCS.filter.LoginFilter</filter-class>  mandatory 
+        <init-param>  optional 
             <param-name>param1</param-name>
             <param-value>param1Value</param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>LoginFilter</filter-name> <!-- mandatory -->
-        <url-pattern>/*</url-pattern> <!-- either url-pattern or servlet-name is mandatory -->
+        <filter-name>LoginFilter</filter-name>  mandatory 
+        <url-pattern>/*</url-pattern>  either url-pattern or servlet-name is mandatory 
         <servlet-name>LoginServlet</servlet-name>
         <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>-->
+    <filter-mapping>
+        <filter-name>JDBCFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+ 
+    <filter-mapping>
+        <filter-name>CookieFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 </web-app>

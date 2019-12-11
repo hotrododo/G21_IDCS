@@ -5,6 +5,8 @@
  */
 package CSTCopyright.IDCS.controller;
 
+import java.sql.Date;
+
 /**
  *
  * @author mac
@@ -20,9 +22,18 @@ public class UserAccount {
     private String fullName;
     private boolean gender;
     private String phoneNumber;
-    private int expiryDate;
+    private Date expiryDate;
     private int userType;
     private int useCount;
+    private String address;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     public String getUserName() {
         return userName;
@@ -72,11 +83,11 @@ public class UserAccount {
         this.phoneNumber = phoneNumber;
     }
 
-    public int getExpiryDate() {
+    public Date getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(int expiryDate) {
+    public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
     }
 

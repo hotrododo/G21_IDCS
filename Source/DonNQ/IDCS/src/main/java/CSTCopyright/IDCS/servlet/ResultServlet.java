@@ -8,7 +8,7 @@ package CSTCopyright.IDCS.servlet;
 import CSTCopyright.IDCS.controller.DomainScan;
 import CSTCopyright.IDCS.controller.UserAccount;
 import CSTCopyright.IDCS.data.ForgeData;
-import CSTCopyright.IDCS.utils.FBUtils;
+//import CSTCopyright.IDCS.utils.FBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
 import java.util.ArrayList;
