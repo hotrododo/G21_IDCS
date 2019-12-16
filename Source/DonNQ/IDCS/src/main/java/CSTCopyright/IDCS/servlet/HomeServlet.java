@@ -8,6 +8,7 @@ package CSTCopyright.IDCS.servlet;
 import CSTCopyright.IDCS.controller.DomainScan;
 import CSTCopyright.IDCS.controller.UserAccount;
 import CSTCopyright.IDCS.data.ForgeData;
+import CSTCopyright.IDCS.services.ScanServices;
 //import CSTCopyright.IDCS.utils.FBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
@@ -90,8 +91,18 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String userName = request.getParameter("frmDomain");
-        
+        String target = request.getParameter("frmDomain");
+        ScanServices scan = new ScanServices();
+        if(!scan.initConn()){
+            System.out.println("Cannot connect to server!");
+        }
+        String tmp = scan.dataTransfer(target);
+        request.setAttribute("info", tmp);
+//        response.sendRedirect(request.getContextPath() + "/result");
+        RequestDispatcher dispatcher //
+                    = this.getServletContext().getRequestDispatcher("/result");
+
+            dispatcher.forward(request, response);
     }
 
     /**

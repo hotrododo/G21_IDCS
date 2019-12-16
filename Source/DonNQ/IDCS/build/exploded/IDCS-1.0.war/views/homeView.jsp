@@ -24,7 +24,7 @@
         <jsp:include page="_header.jsp"></jsp:include>
             <div class="content_layout">
                 <div class="execute_content">
-                    <form method="POST" action="result" onsubmit="return frmValidate()">
+                    <form method="POST" action="home" onsubmit="return frmValidate()">
                         <div class="input-area">
                             <div class="txt_input_domain">
                                 <input class="txt_input" name="frmDomain" id="frmDomain" placeholder="Enter your site..."/>

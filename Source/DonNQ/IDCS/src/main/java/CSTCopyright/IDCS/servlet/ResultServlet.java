@@ -51,9 +51,13 @@ public class ResultServlet extends HttpServlet {
         }
         //scan history
         ArrayList<DomainScan> list = ForgeData.getDomainList();
+        String info = (String)request.getAttribute("info");
         // Store info to the request attribute before forwarding.
         request.setAttribute("user", loginedUser);
         request.setAttribute("list", list);
+
+        request.setAttribute("info", info);
+        System.out.println(info);
         // If the user has logged in, then forward to the page
         // /WEB-INF/views/userInfoView.jsp
         RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/views/resultView.jsp");

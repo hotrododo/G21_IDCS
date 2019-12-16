@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
  * @author mac
  */
 
-@WebFilter(filterName = "CookieFilter", urlPatterns = { "/*" })
+@WebFilter(filterName = "CookieFilter", urlPatterns = { "/login" })
 public class CookieFilter implements Filter{
 
     public CookieFilter() {

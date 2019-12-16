@@ -40,7 +40,7 @@ public class ScanServices {
     // gửi data tới server và nhận lại dữ liệu.
     // Nếu return không phải string data thì kết nối failed
     public String dataTransfer(final String str) {
-        StringBuilder mess = null;
+        String mess = null;
         try {
             // Tạo luồng đầu ra tại client (Gửi dữ liệu tới server)
             os = new BufferedWriter(new OutputStreamWriter(socketOfClient.getOutputStream()));
@@ -51,11 +51,10 @@ public class ScanServices {
             os.write(str);
             os.newLine();
             os.flush();
-            String responseLine = "";
-            while (responseLine.equals("[END-PCK]")) {
-                responseLine = is.readLine();
+            String responseLine;
+            while (!(responseLine = is.readLine()).equals("[END-PCK]")) {
                 System.out.println("Server:" + responseLine);
-                if(responseLine != null) mess.append(responseLine);
+                if(responseLine != null && !responseLine.equals("null")) mess += (responseLine);
             }
             if(os != null) os.close();
             if(is != null) is.close();
@@ -63,7 +62,7 @@ public class ScanServices {
             System.err.println("Couldn't get I/O for the connection to " + serverHost);
             return "-1";
         } 
-        return mess.toString();
+        return mess;
     }
 
     //Đóng kết nối tới server
