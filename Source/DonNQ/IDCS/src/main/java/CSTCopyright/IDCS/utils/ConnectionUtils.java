@@ -5,6 +5,7 @@
  */
 package CSTCopyright.IDCS.utils;
 
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -31,5 +32,9 @@ public class ConnectionUtils {
             conn.rollback();
         } catch (Exception e) {
         }
+    }
+    public static Socket getSocket() 
+            throws ClassNotFoundException, SQLException {
+        return ClientSocketUtils.getMySQLConnection();
     }
 }

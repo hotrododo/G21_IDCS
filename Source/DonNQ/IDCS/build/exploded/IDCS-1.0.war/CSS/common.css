@@ -366,3 +366,48 @@ footer p.info_admin {
 footer {
     height: 40px;
 }
+
+.services-tab{
+    width: 50%;
+    padding: 10pt;
+    border-right: solid 1px #a0a0a0
+}
+.suggestion-tab{
+    width: 50%;
+    padding: 10pt;
+}
+.services-panel{
+    height: 380pt;
+    max-height: 380pt;
+    overflow-y: scroll;
+}
+.services-result{
+    display: -webkit-inline-box;
+}
+.host-info-tab{
+    display: -webkit-inline-box;
+    font-size: 10pt;
+}
+.host-info-tab li{
+    border-bottom: solid 1px red;
+}
+.width-45-percen{
+    width: 45%;
+}
+.host-info-fiels li{
+    list-style-type: none;
+}
+.services-panel h4{
+    width: 50pt;
+    color: white !important; 
+    background-color: green !important;
+}
+.text-center{
+    margin-top: 12px;
+}
+.services-panel p{
+    color: wheat;
+}
+.service-line{
+    border-bottom: solid 1px #a0a0a0
+}

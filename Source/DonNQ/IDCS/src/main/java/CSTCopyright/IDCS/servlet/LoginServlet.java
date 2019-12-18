@@ -5,6 +5,7 @@
  */
 package CSTCopyright.IDCS.servlet;
 
+import CSTCopyright.IDCS.controller.DataSecure;
 import CSTCopyright.IDCS.controller.UserAccount;
 import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
@@ -77,6 +78,8 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
+        String pass = DataSecure.MD5Generate(password);
+        
         String rememberMeStr = request.getParameter("rememberMe");
         boolean remember = "Y".equals(rememberMeStr);
 
@@ -90,9 +93,8 @@ public class LoginServlet extends HttpServlet {
         } else {
             Connection conn = MyUtils.getStoredConnection(request);
             // Find the user in the DB.
-//            user = ForgeData.getUserFake(userName, password);
             user = DBUtils.findUser(conn, userName);
-            if (user == null || !user.getPassword().equals(password)) {
+            if (user == null || !user.getPassword().equals(pass)) {
                 hasError = true;
                 errorString = "User Name or password invalid";
             }

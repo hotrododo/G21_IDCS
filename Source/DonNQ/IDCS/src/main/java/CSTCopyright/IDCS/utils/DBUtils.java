@@ -6,11 +6,13 @@
 package CSTCopyright.IDCS.utils;
 
 import CSTCopyright.IDCS.controller.UserAccount;
+import CSTCopyright.IDCS.controller.VultModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -97,6 +99,27 @@ public class DBUtils {
                 user.setUserType(uType);
                 user.setUseCount(useCount);
                 list.add(user);
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            return null;
+        }
+        return list;
+    }
+    
+    public static List<VultModel> GetVultData(Connection conn, String vultObj){
+        String sql = "SELECT * FROM VultTbl v WHERE v.VultObj = ? ";
+        List<VultModel> list = new ArrayList<>();
+        try{
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            pstm.setString(1, vultObj);
+            ResultSet rs = pstm.executeQuery();
+            if(rs.next()){
+                String vultDes = rs.getString("VultDes");
+                String vultRem = rs.getString("VultRem");
+                String vultNote = rs.getString("VultNote");
+                int vultID = rs.getInt("VultID");
+                list.add(new VultModel(vultID, vultObj, vultDes, vultRem, vultNote));
             }
         } catch (SQLException ex) {
             System.out.println(ex.toString());

@@ -64,6 +64,14 @@
         <filter-name>CookieFilter</filter-name>
         <url-pattern>/login</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>JDBCFilter</filter-name>
+        <url-pattern>/home</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>JDBCFilter</filter-name>
+        <url-pattern>/result</url-pattern>
+    </filter-mapping>
 <!--    <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>

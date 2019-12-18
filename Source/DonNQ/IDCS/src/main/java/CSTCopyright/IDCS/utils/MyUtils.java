@@ -6,6 +6,7 @@
 package CSTCopyright.IDCS.utils;
 
 import CSTCopyright.IDCS.controller.UserAccount;
+import java.net.Socket;
 import java.sql.Connection;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
@@ -21,6 +22,7 @@ public class MyUtils {
     public static final String ATT_NAME_CONNECTION = "ATTRIBUTE_FOR_CONNECTION";
  
     private static final String ATT_NAME_USER_NAME = "ATTRIBUTE_FOR_STORE_USER_NAME_IN_COOKIE";
+
  
     // Store Connection in request attribute.
     // (Information stored only exist during requests)
@@ -73,5 +75,13 @@ public class MyUtils {
         // 0 seconds (This cookie will expire immediately)
         cookieUserName.setMaxAge(0);
         response.addCookie(cookieUserName);
+    }
+    //store socket connection
+    public static void storeSocketConnection(HttpSession session, Socket socket) {
+        session.setAttribute("socket", socket);
+    }
+    public static Socket getSocketConnection(HttpSession session) {
+        Socket sock = (Socket)session.getAttribute("socket");
+        return sock;
     }
 }

@@ -19,28 +19,15 @@ import java.net.UnknownHostException;
  */
 public class ScanServices {
 
-    private final String serverHost = "localhost";
-    private final int serverPort = 12017;
-    private Socket socketOfClient = null;
+   
     private BufferedWriter os = null;
     private BufferedReader is = null;
 
-    // Khởi tạo kết nối tới server
-    public boolean initConn() throws IOException {
-        try {
-            socketOfClient = new Socket(serverHost, serverPort);
-            socketOfClient.setReceiveBufferSize(4096);
-        } catch (final UnknownHostException e) {
-            System.err.println("Don't know about host " + serverHost);
-            return false;
-        }
-        return true;
-    }
-
+    
     // gửi data tới server và nhận lại dữ liệu.
     // Nếu return không phải string data thì kết nối failed
-    public String dataTransfer(final String str) {
-        String mess = null;
+    public String dataTransfer(final String str, Socket socketOfClient) {
+        String mess = "";
         try {
             // Tạo luồng đầu ra tại client (Gửi dữ liệu tới server)
             os = new BufferedWriter(new OutputStreamWriter(socketOfClient.getOutputStream()));
@@ -56,10 +43,10 @@ public class ScanServices {
                 System.out.println("Server:" + responseLine);
                 if(responseLine != null && !responseLine.equals("null")) mess += (responseLine);
             }
-            if(os != null) os.close();
-            if(is != null) is.close();
+            if(os != null) os = null;
+            if(is != null) is= null;
         } catch (final IOException e) {
-            System.err.println("Couldn't get I/O for the connection to " + serverHost);
+            System.err.println("Couldn't get I/O for the connection to server");
             return "-1";
         } 
         return mess;
@@ -68,7 +55,7 @@ public class ScanServices {
     //Đóng kết nối tới server
     //return true: đóng được kết nối
     //return false: không thể đóng kết nối.
-    public boolean closeConn() throws IOException {
+    public boolean closeConn(Socket socketOfClient) throws IOException {
         if (socketOfClient != null) {
             os = new BufferedWriter(new OutputStreamWriter(socketOfClient.getOutputStream()));
             is = new BufferedReader(new InputStreamReader(socketOfClient.getInputStream()));

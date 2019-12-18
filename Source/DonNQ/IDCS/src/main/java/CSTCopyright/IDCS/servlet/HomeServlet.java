@@ -6,13 +6,24 @@
 package CSTCopyright.IDCS.servlet;
 
 import CSTCopyright.IDCS.controller.DomainScan;
+import CSTCopyright.IDCS.controller.JsonServices;
+import CSTCopyright.IDCS.controller.PortModel;
+import CSTCopyright.IDCS.controller.ScanModel;
+import CSTCopyright.IDCS.controller.ServiceModel;
 import CSTCopyright.IDCS.controller.UserAccount;
+import CSTCopyright.IDCS.controller.VultModel;
 import CSTCopyright.IDCS.data.ForgeData;
 import CSTCopyright.IDCS.services.ScanServices;
+import CSTCopyright.IDCS.utils.ConnectionUtils;
 //import CSTCopyright.IDCS.utils.FBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
+import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +36,8 @@ import javax.servlet.http.HttpSession;
  * @author mac
  */
 public class HomeServlet extends HttpServlet {
+    
+     private boolean checkPort = false;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -50,15 +63,14 @@ public class HomeServlet extends HttpServlet {
         }
         //scan history
         ArrayList<DomainScan> list = ForgeData.getDomainList();
-//        try {
-//            //test
-//            boolean test = FBUtils.addAccount(loginedUser);
-//        } catch (InterruptedException | ExecutionException ex) {
-//            Logger.getLogger(HomeServlet.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+
         // Store info to the request attribute before forwarding.
         request.setAttribute("user", loginedUser);
         request.setAttribute("list", list);
+        List<ServiceModel> services = new ArrayList<>();
+        session.setAttribute("services", services);
+        List<VultModel> listVult = new ArrayList<>();
+        session.setAttribute("listVult", listVult);
         // If the user has logged in, then forward to the page
         // /WEB-INF/views/userInfoView.jsp
         RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/views/homeView.jsp");
@@ -92,17 +104,40 @@ public class HomeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String target = request.getParameter("frmDomain");
+        HttpSession session = request.getSession();
+
+        // Check User has logged on
+        UserAccount loginedUser = MyUtils.getLoginedUser(session);
         ScanServices scan = new ScanServices();
-        if(!scan.initConn()){
-            System.out.println("Cannot connect to server!");
+        // Get socket has stored
+        Socket socket = MyUtils.getSocketConnection(session);
+        //create socket
+        if(socket==null){
+            try {
+                socket = ConnectionUtils.getSocket();
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(HomeServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(HomeServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }            
+            MyUtils.storeSocketConnection(session, socket);
         }
-        String tmp = scan.dataTransfer(target);
-        request.setAttribute("info", tmp);
-//        response.sendRedirect(request.getContextPath() + "/result");
+        //Get host info
+        String data = scan.dataTransfer(target, socket);
+        JsonServices ser = new JsonServices();
+        //Extract info from raw data
+        ScanModel host = ser.ExtractHostInfo(data, target, loginedUser);
+        //Get port info
+        data = scan.dataTransfer("+", socket);
+        List<PortModel> listPorts = ser.ExtractPortInfo(data, target, "admin");
+        //store host and port info to session
+        session.setAttribute("host", host);
+        session.setAttribute("ports", listPorts);
+        
         RequestDispatcher dispatcher //
                     = this.getServletContext().getRequestDispatcher("/result");
-
-            dispatcher.forward(request, response);
+        
+                dispatcher.forward(request, response);
     }
 
     /**

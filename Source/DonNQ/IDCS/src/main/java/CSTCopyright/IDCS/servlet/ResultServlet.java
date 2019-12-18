@@ -5,13 +5,20 @@
  */
 package CSTCopyright.IDCS.servlet;
 
-import CSTCopyright.IDCS.controller.DomainScan;
+import CSTCopyright.IDCS.controller.JsonServices;
+import CSTCopyright.IDCS.controller.PortModel;
+import CSTCopyright.IDCS.controller.ScanModel;
+import CSTCopyright.IDCS.controller.ServiceModel;
 import CSTCopyright.IDCS.controller.UserAccount;
-import CSTCopyright.IDCS.data.ForgeData;
-//import CSTCopyright.IDCS.utils.FBUtils;
+import CSTCopyright.IDCS.controller.VultModel;
+import CSTCopyright.IDCS.services.ScanServices;
+import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
+import java.net.Socket;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,6 +33,8 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "result", urlPatterns = {"/result"})
 public class ResultServlet extends HttpServlet {
+
+    private boolean checkPort = false;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -49,17 +58,51 @@ public class ResultServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        //scan history
-        ArrayList<DomainScan> list = ForgeData.getDomainList();
-        String info = (String)request.getAttribute("info");
+        //load data from session
+        ScanModel host = (ScanModel) session.getAttribute("host");
+        List<PortModel> ports = (List<PortModel>) session.getAttribute("ports");
+        Socket socket = MyUtils.getSocketConnection(session);
+        ScanServices scan = new ScanServices();
         // Store info to the request attribute before forwarding.
         request.setAttribute("user", loginedUser);
-        request.setAttribute("list", list);
+        request.setAttribute("ports", ports);
+        request.setAttribute("host", host);
+        //try to get services from session
+        List<ServiceModel> services = (List<ServiceModel>) session.getAttribute("services");
+        List<VultModel> list = (List<VultModel>) session.getAttribute("listVult");
+        String port = (String) request.getParameter("port");
+        if (port != null) {
+            JsonServices ser = new JsonServices();
 
-        request.setAttribute("info", info);
-        System.out.println(info);
+            String data = scan.dataTransfer(port, socket);
+            ServiceModel serv = ser.ExtractServiceInfo(data, host.getTARGET(), port, "admin");
+            if (serv != null) {
+                boolean hasService = false;
+                for (int i = 0; i < services.size(); i++) {
+                    if (services.get(i).getPORTNUM() == null ? serv.getPORTNUM() == null : services.get(i).getPORTNUM().equals(serv.getPORTNUM())) {
+                        services.set(i, serv);
+                        hasService = true;
+                    }
+                }
+                if(!hasService){
+                    services.add(serv);
+                }
+
+                request.setAttribute("services", services);
+                session.setAttribute("services", services);
+                for (PortModel p : ports) {
+                    if (p.getPORTNUM().equals(port)) {
+                        Connection conn = MyUtils.getStoredConnection(request);
+                        list.addAll(DBUtils.GetVultData(conn, p.getNAME()));
+                        list = duplicateRepair(list);
+                        session.setAttribute("listVult", list);
+                        request.setAttribute("listVult", list);
+                    }
+                }
+            }
+        }
+
         // If the user has logged in, then forward to the page
-        // /WEB-INF/views/userInfoView.jsp
         RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/views/resultView.jsp");
         dispatcher.forward(request, response);
     }
@@ -90,7 +133,9 @@ public class ResultServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         processRequest(request, response);
+
     }
 
     /**
@@ -103,4 +148,18 @@ public class ResultServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private List<VultModel> duplicateRepair(List<VultModel> list){
+        int listSize = list.size();
+        for (int i = 0; i < listSize; i++) {
+            for (int j = i+1; j < listSize; j++) {
+                boolean b = list.get(i).equals(list.get(j));
+                if(list.get(i).equals(list.get(j))){
+                    list.remove(j);
+                    listSize -= 1;
+                    j -= 1;
+                }
+            }
+        }
+        return list;
+    }
 }
