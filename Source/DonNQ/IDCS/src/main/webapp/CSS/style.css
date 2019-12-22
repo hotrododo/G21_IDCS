@@ -299,7 +299,7 @@ footer p.info_admin {
     background: rgb(10, 10, 10);
     background: -moz-linear-gradient(180deg, rgba(10, 10, 10, 1) 100%, rgba(41, 38, 38, 1) 100%);
     background: -webkit-linear-gradient(180deg, rgba(10, 10, 10, 1) 100%, rgba(41, 38, 38, 1) 100%);
-    background: linear-gradient(180deg, rgba(10, 10, 10, 1) 100%, rgba(41, 38, 38, 1) 100%);
+    background: linear-gradient(180deg, rgba(29, 29, 29, 1) 100%, rgba(107, 100, 100, 1) 100%);
     /*filter: "progid: DXImageTransform.Microsoft.gradient(startColorstr="#0a0a0a", endColorstr="#292626", GradientType=1)";*/
 }
 

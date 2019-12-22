@@ -12,7 +12,6 @@
         <title>Internet-connected Checking System</title>
         <link rel="stylesheet" type="text/css" href="../${pageContext.request.contextPath}/CSS/common.css"/>
         <script src="https://kit.fontawesome.com/1956e41869.js" crossorigin="anonymous"></script>
-        <script src="../JS/javascript.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/style.css">
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/mobie-css.css">
         <link rel="icon" type="../${pageContext.request.contextPath}/IMG/png" href="./image/favicon.png">

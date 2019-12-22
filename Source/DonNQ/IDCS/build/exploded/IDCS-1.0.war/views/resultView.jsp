@@ -34,13 +34,13 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-4 text-center">
+                    <div class="col-sm-4 col-md-4 text-center">
                         <div class="box_search_result">
                             <input type="search" placeholder="Find in the text..." name="" id=""/>
                             <label><i class="fa fa-search" aria-hidden="true"></i></label>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-2 text-right">
+                    <div class="col-sm-2 col-md-2 text-right">
                         <a href="homepage.html" class="home_page"><i class="fas fa-home"></i> HOME PAGE</a>
                     </div>
                 </div>

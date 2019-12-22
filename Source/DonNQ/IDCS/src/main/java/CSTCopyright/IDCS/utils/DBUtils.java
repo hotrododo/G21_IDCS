@@ -127,5 +127,50 @@ public class DBUtils {
         }
         return list;
     }
+    
+    public static boolean updateUser(Connection conn, UserAccount user) {
+
+        String sql = "Update UserInfo u"
+                + " set u.Gender = ?, u.Email = ?, u.FullName = ?,"
+                + " u.PhoneNumber = ?, u.EXPDate = ?, u.UserType = ?,"
+                + " u.Address = ? WHERE u.UserName = ?";
+        try {
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            pstm.setBoolean(1, user.isGender());
+            pstm.setString(2, user.getEmailAddress());
+            pstm.setString(3, user.getFullName());
+            pstm.setString(4, user.getPhoneNumber());
+            pstm.setDate(5, user.getExpiryDate());
+            pstm.setInt(6, user.getUserType());
+            pstm.setString(7, user.getAddress());
+            pstm.setString(8, user.getUserName());
+
+            int rs = pstm.executeUpdate();
+
+        } catch (SQLException ex) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    public static boolean updateUserPassword(Connection conn, UserAccount user) {
+
+        String sql = "Update User u"
+                + " set u.Password = ? WHERE u.UserName = ?";
+        try {
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            pstm.setString(1, user.getPassword());
+            pstm.setString(2, user.getUserName());
+
+            int rs = pstm.executeUpdate();
+
+        } catch (SQLException ex) {
+            return false;
+        }
+
+        return true;
+    }
+    
 
 }

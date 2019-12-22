@@ -16,6 +16,18 @@
         <servlet-name>result</servlet-name>
         <servlet-class>CSTCopyright.IDCS.servlet.ResultServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>userinfo</servlet-name>
+        <servlet-class>CSTCopyright.IDCS.servlet.UserInfoServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>userupdate</servlet-name>
+        <servlet-class>CSTCopyright.IDCS.servlet.UserUpdateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>passwordupdate</servlet-name>
+        <servlet-class>CSTCopyright.IDCS.servlet.PasswordUpdateServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>home</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -31,6 +43,18 @@
     <servlet-mapping>
         <servlet-name>result</servlet-name>
         <url-pattern>/result</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>userinfo</servlet-name>
+        <url-pattern>/userinfo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>userupdate</servlet-name>
+        <url-pattern>/userupdate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>passwordupdate</servlet-name>
+        <url-pattern>/passwordupdate</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -70,7 +94,7 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>JDBCFilter</filter-name>
-        <url-pattern>/result</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 <!--    <filter-mapping>
         <filter-name>EncodingFilter</filter-name>

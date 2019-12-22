@@ -5,6 +5,7 @@
  */
 package CSTCopyright.IDCS.servlet;
 
+//import CSTCopyright.IDCS.controller.GoogleResults;
 import CSTCopyright.IDCS.controller.JsonServices;
 import CSTCopyright.IDCS.controller.PortModel;
 import CSTCopyright.IDCS.controller.ScanModel;
@@ -14,11 +15,19 @@ import CSTCopyright.IDCS.controller.VultModel;
 import CSTCopyright.IDCS.services.ScanServices;
 import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,7 +43,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "result", urlPatterns = {"/result"})
 public class ResultServlet extends HttpServlet {
 
-    private boolean checkPort = false;
+    private final boolean checkPort = false;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -84,7 +93,7 @@ public class ResultServlet extends HttpServlet {
                         hasService = true;
                     }
                 }
-                if(!hasService){
+                if (!hasService) {
                     services.add(serv);
                 }
 
@@ -148,12 +157,12 @@ public class ResultServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private List<VultModel> duplicateRepair(List<VultModel> list){
+    private List<VultModel> duplicateRepair(List<VultModel> list) {
         int listSize = list.size();
         for (int i = 0; i < listSize; i++) {
-            for (int j = i+1; j < listSize; j++) {
+            for (int j = i + 1; j < listSize; j++) {
                 boolean b = list.get(i).equals(list.get(j));
-                if(list.get(i).equals(list.get(j))){
+                if (list.get(i).equals(list.get(j))) {
                     list.remove(j);
                     listSize -= 1;
                     j -= 1;
@@ -161,5 +170,28 @@ public class ResultServlet extends HttpServlet {
             }
         }
         return list;
+    }
+
+    public static void GoogleSearch() {
+        String google = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=";
+        String search = "stackoverflow";
+        String charset = "UTF-8";
+
+        URL url = null;
+        try {
+            url = new URL(google + URLEncoder.encode(search, charset));
+        } catch (UnsupportedEncodingException | MalformedURLException ex) {
+            Logger.getLogger(ResultServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Reader reader = null;
+        try {
+            reader = new InputStreamReader(url.openStream(), charset);
+        } catch (IOException ex) {
+            Logger.getLogger(ResultServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//        GoogleResults results = new Gson().fromJson(reader, GoogleResults.class);
+
+        // Show title and URL of 1st result.
+//        System.out.println(results.getResponseData());
     }
 }

@@ -6,6 +6,7 @@
 package CSTCopyright.IDCS.servlet;
 
 import CSTCopyright.IDCS.controller.DataSecure;
+import CSTCopyright.IDCS.controller.GoogleResults;
 import CSTCopyright.IDCS.controller.UserAccount;
 import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
@@ -76,6 +77,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
         String pass = DataSecure.MD5Generate(password);
