@@ -5,9 +5,9 @@
  */
 package CSTCopyright.IDCS.servlet;
 
-import CSTCopyright.IDCS.controller.UserAccount;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author mac
  */
-public class SignoutServlet extends HttpServlet {
+public class SignOutServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,14 +32,12 @@ public class SignoutServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-
-        // Check User has logged on
-        UserAccount loginedUser = MyUtils.getLoginedUser(session);
         //clear session
         session.invalidate();
         MyUtils.deleteUserCookie(response);
         // Redirect to login page.
-        response.sendRedirect(request.getContextPath() + "/login");
+        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/login");
+        dispatcher.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

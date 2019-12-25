@@ -12,13 +12,15 @@ import CSTCopyright.IDCS.controller.ScanModel;
 import CSTCopyright.IDCS.controller.ServiceModel;
 import CSTCopyright.IDCS.controller.UserAccount;
 import CSTCopyright.IDCS.controller.VultModel;
+import CSTCopyright.IDCS.data.DataHandle;
 import CSTCopyright.IDCS.data.ForgeData;
 import CSTCopyright.IDCS.services.ScanServices;
 import CSTCopyright.IDCS.utils.ConnectionUtils;
-//import CSTCopyright.IDCS.utils.FBUtils;
+import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +38,8 @@ import javax.servlet.http.HttpSession;
  * @author mac
  */
 public class HomeServlet extends HttpServlet {
-    
-     private boolean checkPort = false;
+
+    private boolean checkPort = false;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -61,12 +63,23 @@ public class HomeServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
+        Connection conn = MyUtils.getStoredConnection(request);
+        ScanModel latestRecord = DBUtils.getLatestScanRecord(conn, loginedUser.getUserName());
+        ScanModel mostRecord = DBUtils.getMostScanRecord(conn, loginedUser.getUserName());
+        request.setAttribute("latestRecord", latestRecord);
+        request.setAttribute("mostRecord", mostRecord);
+        //init error variable
+//        String errorMess = new String();
+//        errorMess = (String)request.getAttribute(errorMess);
+//        request.set
+
         //scan history
         ArrayList<DomainScan> list = ForgeData.getDomainList();
 
         // Store info to the request attribute before forwarding.
         request.setAttribute("user", loginedUser);
         request.setAttribute("list", list);
+        //init const
         List<ServiceModel> services = new ArrayList<>();
         session.setAttribute("services", services);
         List<VultModel> listVult = new ArrayList<>();
@@ -112,32 +125,73 @@ public class HomeServlet extends HttpServlet {
         // Get socket has stored
         Socket socket = MyUtils.getSocketConnection(session);
         //create socket
-        if(socket==null){
+        if (socket == null) {
             try {
                 socket = ConnectionUtils.getSocket();
-            } catch (ClassNotFoundException ex) {
+            } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(HomeServlet.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException ex) {
-                Logger.getLogger(HomeServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }            
+            }
             MyUtils.storeSocketConnection(session, socket);
         }
+        String packet = "{\"target\":\"" + target +"\",\"port\":22,\"mode\":0}";
         //Get host info
-        String data = scan.dataTransfer(target, socket);
-        JsonServices ser = new JsonServices();
-        //Extract info from raw data
-        ScanModel host = ser.ExtractHostInfo(data, target, loginedUser);
-        //Get port info
-        data = scan.dataTransfer("+", socket);
-        List<PortModel> listPorts = ser.ExtractPortInfo(data, target, "admin");
-        //store host and port info to session
-        session.setAttribute("host", host);
-        session.setAttribute("ports", listPorts);
-        
-        RequestDispatcher dispatcher //
-                    = this.getServletContext().getRequestDispatcher("/result");
-        
+        String data = scan.dataTransfer(packet, socket);
+        if (DataHandle.hostHasUp(data)) {
+            if (DataHandle.hostHasSign(data)) {
+                JsonServices ser = new JsonServices();
+                //Extract info from raw data
+                ScanModel host = ser.ExtractHostInfo(data, target, loginedUser);
+                Connection conn = MyUtils.getStoredConnection(request);
+                ScanModel scanstamp = DBUtils.findScanByDateScan(conn, host);
+                if (scanstamp.getS_ID() == null) {
+                    if (DBUtils.addScan(conn, host)) {
+                        System.out.println("Host data saved");
+                    } else {
+                        System.out.println("Data failed");
+                    }
+                } else {
+                    if (DBUtils.updateScan(conn, host)) {
+                        System.out.println("Host data updated");
+                    } else {
+                        System.out.println("Data change failed");
+                    }
+                }
+                ScanModel hostStamp = DBUtils.findScanByDateScan(conn, host);
+                //Get port info
+                packet = packet.replaceFirst("0", "1");
+                data = scan.dataTransfer(packet, socket);
+                List<PortModel> listPorts = ser.ExtractPortInfo(data, target, hostStamp.getS_ID());
+                listPorts.stream().filter((p) -> (p != null)).forEachOrdered((p) -> {
+                    PortModel portstamp = DBUtils.findPort(conn, p);
+                    if (portstamp.getS_ID() == null) {
+                        if (DBUtils.addPort(conn, p)) {
+                            System.out.println("Add a port: " + p.getPORTNUM());
+                        } else {
+                            System.out.println("Cannot add port " + p.getPORTNUM());
+                        }
+                    } else {
+                        System.out.println("Port have ready");
+                    }
+                });
+                //store host and port info to session
+                session.setAttribute("host", hostStamp);
+                session.setAttribute("ports", listPorts);
+
+                RequestDispatcher dispatcher //
+                        = this.getServletContext().getRequestDispatcher("/result");
+
                 dispatcher.forward(request, response);
+            } else {
+                String errorMess = "Host has not registered information";
+                request.setAttribute("errorMess", errorMess);
+                processRequest(request, response);
+            }
+        } else {
+            String errorMess = "Host seem down or not public!";
+            request.setAttribute("errorMess", errorMess);
+            processRequest(request, response);
+        }
+
     }
 
     /**

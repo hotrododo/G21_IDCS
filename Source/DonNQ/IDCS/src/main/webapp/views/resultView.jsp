@@ -22,14 +22,17 @@
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/style.css">
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/mobie-css.css">
     </head>
-
-    <body class="page_result">
+    <%
+        String errorMess = new String();
+        errorMess = (String)request.getAttribute("errorMess");
+    %>
+    <body class="page_result" onload="hasErrorAlert('${errorMess}')">
         <header class="header">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6 col-md-6">
                         <div class="logo">
-                            <a href="../${pageContext.request.contextPath}/login" title="IDCS">
+                            <a href="${pageContext.request.contextPath}/home" title="IDCS">
                                 <img src="../${pageContext.request.contextPath}/IMG/logo_idcs.png" alt="logo" srcset=""/>
                             </a>
                         </div>
@@ -41,7 +44,7 @@
                         </div>
                     </div>
                     <div class="col-sm-2 col-md-2 text-right">
-                        <a href="homepage.html" class="home_page"><i class="fas fa-home"></i> HOME PAGE</a>
+                        <a href="${pageContext.request.contextPath}/home" class="home_page"><i class="fas fa-home"></i> HOME PAGE</a>
                     </div>
                 </div>
             </div>
@@ -58,34 +61,30 @@
                                         width="100%" height="250" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
                                 <h4><i class="fas fa-globe-americas"></i>${host.getDDNS()}</h4>
                                 <div class="host-info-tab">
-                                    <ul class="width-45-percen">
-                                        <li>
-                                            IPv4
-                                        </li>
-                                        <li>
-                                            Country
-                                        </li>
-                                        <li>
-                                            Orgranzation
-                                        </li>
-                                        <li>
-                                            ISP
-                                        </li>
-                                        <li>
-                                            Last Update
-                                        </li>
-                                        <li>
-                                            ASN
-                                        </li>
-                                    </ul>
-                                    <ul class="host-info-fiels">
-                                        <li>${host.getIPv4()}</li>
-                                        <li>${host.getCOUNTRY()}</li>
-                                        <li>${host.getNETNAME()}</li>
-                                        <li>${host.getDESCR()}</li>
-                                        <li>${host.getDATESCAN()}</li>
-                                        <li>${host.getPERSON()}</li>
-                                    </ul>
+                                    <div class="row">
+                                        <p class="col-md-4">IPv4</p>
+                                        <p class="col-md-7">${host.getIPv4()}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-md-4">Country</p>
+                                        <p class="col-md-7">${host.getCOUNTRY()}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-md-4">Orgranzation</p>
+                                        <p class="col-md-7">${host.getNETNAME()}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-md-4">ISP</p>
+                                        <p class="col-md-7">${host.getDESCR()}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-md-4">Last Update</p>
+                                        <p class="col-md-7">${host.getDATESCAN()}</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="col-md-4">ASN</p>
+                                        <p class="col-md-7">${host.getPERSON()}</p>
+                                    </div>
                                 </div>
                                 <h4>
                                     WEB TECHNOLOGIES
@@ -144,29 +143,29 @@
                                         <p><%=port.getVERSION()%></p>
 
                                         <div class="services-result">
-                                            <div class="services-tab">
-                                                <p style="color: white;"><%=serv.getSCRIPT()%></p>
-
+                                            <div class="col-md-6 services-tab">
+                                                <p><%=serv.getSCRIPT()%></p>
                                             </div>
-                                            <div class="suggestion-tab">
+                                            <div class="col-md-6 suggestion-tab">
                                                 <%
-                                                    List<VultModel> list = (List<VultModel>) request.getAttribute("listVult");
+                                                    List< VultModel> list = (List<VultModel>) request.getAttribute("listVult");
+
                                                     if (list != null) {
                                                         for (VultModel vult : list) {
-                                                           if (port.getNAME().equals(vult.getVultObj())
-                                                                   && serv.getSCRIPT().toLowerCase().contains(vult.getVultDes().toLowerCase())) {%>
+                                                            if (port.getNAME().equals(vult.getVultObj())
+                                                                    && serv.getSCRIPT().toLowerCase().contains(vult.getVultDes().toLowerCase())) {%>
                                                 <p style="color: red;"><%=vult.getVultRem()%></p>
                                                 <%}
-                                                    }
-                                                }%> 
+                                                        }
+                                                    }%> 
                                             </div>
                                         </div>
                                         <%}
-                                                        }%>
+                                            }%>
                                     </div>
                                     <%}
-                                                            }
-                                                        }%>
+                                            }
+                                        }%>
 
                                 </div>
                             </div>
