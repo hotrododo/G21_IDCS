@@ -1,0 +1,44 @@
+@media (max-width: 768px) {
+    .login_form {
+        padding: 20% 15px;
+    }
+    .header img {
+        height: auto;
+        width: 120px;
+    }
+    .header .col-md-6 {
+        max-width: 50%;
+    }
+    .home_page {
+        font-size: 0.8em;
+    }
+    .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .title-login h1 {
+        font-size: 1.5em;
+    }
+    .border-table {
+        overflow: auto;
+    }
+    .border-table table {
+        width: 1000px;
+    }
+    .payment_form {
+        margin: 50px 10px;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    form .form-control {
+        max-width: 89%;
+    }
+}
+
+@media (max-width: 375px) {
+    form .form-control {
+        max-width: 85%;
+    }
+}

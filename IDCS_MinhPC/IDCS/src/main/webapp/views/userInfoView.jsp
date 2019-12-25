@@ -5,7 +5,7 @@
 --%>
 <%@page import="java.util.concurrent.TimeUnit"%>
 <%@page import="java.sql.Date"%>
-<%@page import="CSTCopyright.IDCS.model.UserAccount"%>
+<%@page import="CSTCopyright.IDCS.controller.UserAccount"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -35,7 +35,11 @@
                         <div class="left-menu">
                             <div class="left-menu-header text-center">
                                 <div class="left-menu-logo">
-                                    <img src="../${pageContext.request.contextPath}/IMG/logo_idcs.png">
+                                    <form action="/home" method="POST">
+                                        <button>
+                                            <img src="../${pageContext.request.contextPath}/IMG/logo_idcs.png">
+                                        </button>
+                                    </form>
                                 </div>
                                 <div class="left-menu-profiles">
                                     <img src="../${pageContext.request.contextPath}/IMG/premium-avatar.png">
@@ -47,10 +51,10 @@
                             <div class="left-menu-body">
                                 <div id="navShow" class="left-menu-navi">
                                     <p>User Dasboard</p>
-                                    <a value="1" href="#">User Info</a>
-                                    <a value="2" href="#">Payment</a>
-                                    <a value="3" href="#">Contact</a>
-                                    <a value="4" href="#">Help</a>
+                                    <a value="1" onclick="userinfo()">User Info</a>
+                                    <a value="2" onclick="payment()">Payment</a>
+                                    <a value="3" onclick="contact()">Contact</a>
+                                    <a value="4" onclick="help()">Help</a>
                                 </div>
                             </div>
                             <div class="left-menu-footer text-center">
@@ -62,8 +66,10 @@
                     <div class="col-xs-12 col-md-9 user-body-layout">
                         <div class="row header-bar">
                             <div class="header-bar-accessible">
-                                <button class="btn-hide-side-menu"><i class="fas fa-eye-slash"></i></button>
-                                <button class="col-md-2 btn-header-logout"><i class="fas fa-sign-out-alt"></i>Logout</i></button>
+                                <form method="POST" action="/signout">
+                                    <button class="btn-hide-side-menu"><i class="fas fa-eye-slash"></i></button>
+                                    <button type="submit" class="col-md-2 btn-header-logout"><i class="fas fa-sign-out-alt"></i>Logout</i></button>
+                                </form>
                             </div>
                         </div>
                         <div class="row user-label-direct">
@@ -208,6 +214,77 @@
                                         <button type="submit">Change Password</button>
                                     </form> 
                                     <!----END FORM 5---->
+                                    <!----FORM 2---->
+                                    <div class="payment dis-2 layer">
+                                        <div class="row for-sale">
+                                            <div class="col-md-12">
+                                                <div class="row for-sale-title">
+                                                    <p class="col-md-6">Cost</p>
+                                                    <p class="col-md-6">Expiry Days</p>
+                                                </div>
+                                                <div class="row">
+                                                    <p class="col-md-6">$1.99</p>
+                                                    <p class="col-md-6">10 times/3 days</p>
+                                                </div>
+                                                <div class="row">
+                                                    <p class="col-md-6">$9.99</p>
+                                                    <p class="col-md-6">100 times/30 days</p>
+                                                </div>
+                                                <div class="row">
+                                                    <p class="col-md-6">$49.99</p>
+                                                    <p class="col-md-6">3000 times/1 year</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row sale-info">
+                                            <div>
+                                                <div class="row">
+                                                    <p>If you pay by bank transfer, please use one of the following accounts:</p>
+                                                </div>
+                                                <div class="row VISA-Account">
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <p class="col-md-4">Account Number</p>
+                                                            <p class="col-md-4">Account Name</p>
+                                                            <p class="col-md-4">Bank</p>
+                                                        </div>
+                                                        <div class="row">
+                                                            <p class="col-md-4">101001223460</p>
+                                                            <p class="col-md-4">IDCS Company</p>
+                                                            <p class="col-md-4">Vietinbank</p>
+                                                        </div>
+                                                        <div class="row">
+                                                            <p class="col-md-4">102200330440</p>
+                                                            <p class="col-md-4">IDCS Company</p>
+                                                            <p class="col-md-4">Paypal</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row payment-guide">
+                                                    <a>Please transfer with the message:</a>
+                                                    <br>
+                                                    <a>IDCS-[your account] for example: IDCS-johnny12</a>
+                                                    <br>
+                                                    <a>Best regards!</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!----END FORM 2---->
+                                    <!----FORM 3---->
+                                    <div class="contact dis-3 layer">
+                                        <p>Internet-connected Devices Checking System - is a security tool for early detection of vulnerabilities inside your server system.</p>
+                                        <p>IDCS is designed to provide security benefits with powerful scanning technologies within a simple interface. Our tool will help system administrators to detect security holes early, providing solutions to troubleshoot system problems.</p>
+                                        <p>Any suggestions, questions, or problem reports, please send mail to the email address: support@idcs.com</p>
+                                        <p>Hotline phone number: +84 35800 8888</p>
+                                        <p>Office address: Hoa Lac Hi-Tech Park, Thang Long Highways, Hanoi, Vietnam</p>
+                                    </div>
+                                    <!----END FORM 3---->
+                                    <!----FORM 4---->
+                                    <div class="help dis-4 layer">
+                                        <!--HELP-->
+                                    </div>
+                                    <!----END FORM 4---->
                                 </div>
                             </div>
                         </div>
