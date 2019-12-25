@@ -12,22 +12,14 @@ import CSTCopyright.IDCS.controller.ScanModel;
 import CSTCopyright.IDCS.controller.ServiceModel;
 import CSTCopyright.IDCS.controller.UserAccount;
 import CSTCopyright.IDCS.controller.VultModel;
+import CSTCopyright.IDCS.data.DataHandle;
 import CSTCopyright.IDCS.services.ScanServices;
 import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
-import com.google.gson.Gson;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.sql.Connection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -67,6 +59,7 @@ public class ResultServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
+        String mess = new String();
         //load data from session
         ScanModel host = (ScanModel) session.getAttribute("host");
         List<PortModel> ports = (List<PortModel>) session.getAttribute("ports");
@@ -79,36 +72,53 @@ public class ResultServlet extends HttpServlet {
         //try to get services from session
         List<ServiceModel> services = (List<ServiceModel>) session.getAttribute("services");
         List<VultModel> list = (List<VultModel>) session.getAttribute("listVult");
+        //get port from button
         String port = (String) request.getParameter("port");
+        //get connection
+        Connection conn = MyUtils.getStoredConnection(request);
         if (port != null) {
             JsonServices ser = new JsonServices();
+            String packet = "{\"target\":\"" + host.getTARGET() + "\",\"port\":" + port + ",\"mode\":2}";
+            //get data from service
+            String data = scan.dataTransfer(packet, socket);
+            if (DataHandle.serviceHasScript(data)) {
+                ServiceModel serv = ser.ExtractServiceInfo(data, host.getTARGET(), port, host.getS_ID());
+                if (serv != null) {
+                    boolean hasService = false;
+                    for (int i = 0; i < services.size(); i++) {
+                        if (services.get(i).getPORTNUM() == null ? serv.getPORTNUM() == null : services.get(i).getPORTNUM().equals(serv.getPORTNUM())) {
+                            services.set(i, serv);
+                            hasService = true;
+                        }
+                    }
+                    if (!hasService) {
+                        services.add(serv);
+                    }
+                    ServiceModel servicestamp = DBUtils.findService(conn, serv);
+                    if (servicestamp.getS_ID() == null) {
+                        if (DBUtils.addService(conn, serv)) {
+                            System.out.println("add service " + serv.getS_ID() + " : " + serv.getPORTNUM());
+                        }
+                    }
+                    session.setAttribute("services", services);
+                    for (PortModel p : ports) {
+                        if (p.getPORTNUM().equals(port)) {
 
-            String data = scan.dataTransfer(port, socket);
-            ServiceModel serv = ser.ExtractServiceInfo(data, host.getTARGET(), port, "admin");
-            if (serv != null) {
-                boolean hasService = false;
-                for (int i = 0; i < services.size(); i++) {
-                    if (services.get(i).getPORTNUM() == null ? serv.getPORTNUM() == null : services.get(i).getPORTNUM().equals(serv.getPORTNUM())) {
-                        services.set(i, serv);
-                        hasService = true;
+                            list.addAll(DBUtils.GetVultData(conn, p.getNAME()));
+                            list = duplicateRepair(list);
+                            session.setAttribute("listVult", list);
+                        }
                     }
                 }
-                if (!hasService) {
-                    services.add(serv);
-                }
-
-                request.setAttribute("services", services);
-                session.setAttribute("services", services);
-                for (PortModel p : ports) {
-                    if (p.getPORTNUM().equals(port)) {
-                        Connection conn = MyUtils.getStoredConnection(request);
-                        list.addAll(DBUtils.GetVultData(conn, p.getNAME()));
-                        list = duplicateRepair(list);
-                        session.setAttribute("listVult", list);
-                        request.setAttribute("listVult", list);
-                    }
-                }
+            } else {
+                mess = "Some ports cannot be scanned at this time because we are"
+                        + " in the process of upgrading. That will soon return to normal in a period of time!";
+                
             }
+            request.setAttribute("errorMess", mess);
+            request.setAttribute("services", services);
+            request.setAttribute("listVult", list);
+
         }
 
         // If the user has logged in, then forward to the page
@@ -172,26 +182,4 @@ public class ResultServlet extends HttpServlet {
         return list;
     }
 
-    public static void GoogleSearch() {
-        String google = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=";
-        String search = "stackoverflow";
-        String charset = "UTF-8";
-
-        URL url = null;
-        try {
-            url = new URL(google + URLEncoder.encode(search, charset));
-        } catch (UnsupportedEncodingException | MalformedURLException ex) {
-            Logger.getLogger(ResultServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Reader reader = null;
-        try {
-            reader = new InputStreamReader(url.openStream(), charset);
-        } catch (IOException ex) {
-            Logger.getLogger(ResultServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-//        GoogleResults results = new Gson().fromJson(reader, GoogleResults.class);
-
-        // Show title and URL of 1st result.
-//        System.out.println(results.getResponseData());
-    }
 }

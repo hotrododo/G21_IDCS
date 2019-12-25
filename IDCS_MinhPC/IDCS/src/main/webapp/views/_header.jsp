@@ -5,7 +5,7 @@
 --%>
 
 <%@page import="CSTCopyright.IDCS.utils.MyUtils"%>
-<%@page import="CSTCopyright.IDCS.model.UserAccount"%>
+<%@page import="CSTCopyright.IDCS.controller.UserAccount"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <div class="menu_bar">

@@ -6,8 +6,7 @@
 package CSTCopyright.IDCS.servlet;
 
 import CSTCopyright.IDCS.controller.DataSecure;
-import CSTCopyright.IDCS.model.Constant;
-import CSTCopyright.IDCS.model.UserAccount;
+import CSTCopyright.IDCS.controller.UserAccount;
 import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
@@ -77,6 +76,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
         String pass = DataSecure.MD5Generate(password);
@@ -86,17 +86,15 @@ public class LoginServlet extends HttpServlet {
 
         UserAccount user = null;
         boolean hasError = false;
-        int userType;
         String errorString = request.getParameter("errorString");
-        DBUtils db = new DBUtils();
-        
+
         if (userName == null || password == null || userName.length() == 0 || password.length() == 0) {
             hasError = true;
             errorString = "Required username and password!";
         } else {
             Connection conn = MyUtils.getStoredConnection(request);
             // Find the user in the DB.
-            user = db.findUser(conn, userName);
+            user = DBUtils.findUser(conn, userName);
             if (user == null || !user.getPassword().equals(pass)) {
                 hasError = true;
                 errorString = "User Name or password invalid";
@@ -131,13 +129,9 @@ public class LoginServlet extends HttpServlet {
             else {
                 MyUtils.deleteUserCookie(response);
             }
-            userType = user.getUserType();
+
             // Redirect to userInfo page.
-            if (userType == Constant.Admin) {
-                response.sendRedirect(request.getContextPath() + "/manager");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/home");
-            }
+            response.sendRedirect(request.getContextPath() + "/home");
         }
     }
 

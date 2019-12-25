@@ -5,11 +5,9 @@
  */
 package CSTCopyright.IDCS.utils;
 
-import static CSTCopyright.IDCS.utils.MySQLConnUtils.getMySQLConnection;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,9 +20,9 @@ public class ClientSocketUtils {
     public static Socket getMySQLConnection()
             throws ClassNotFoundException, SQLException {
         // Chú ý: Thay đổi các thông số kết nối cho phù hợp.
-        String serverHost = "localhost";
+        String serverHost = "34.87.104.46";
         int serverPort = 12017;
-        int buffSize = 4096;
+        int buffSize = 2048;
         return getMySQLConnection(serverHost, serverPort, buffSize);
     }
     private static Socket getMySQLConnection(String serverHost, int serverPort, int buffSize){

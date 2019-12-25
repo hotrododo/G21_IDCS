@@ -17,9 +17,17 @@
         <link rel="icon" type="../${pageContext.request.contextPath}/IMG/png" href="./image/favicon.png">
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/bootstrap/bootstrap.min.css">
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/fontawesome-free/css/all.min.css">
+        <script src="../${pageContext.request.contextPath}/JS/javascript.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     </head>
-    <body class="bg_home">
-
+    <%
+        String errorMess = new String();
+        errorMess = (String) request.getAttribute("errorMess");
+    %>
+    <body class="bg_home" onload="hasErrorAlert('${errorMess}')">
         <jsp:include page="_header.jsp"></jsp:include>
             <div class="content_layout">
                 <div class="execute_content">
@@ -32,46 +40,102 @@
                             </button>
                         </div>
                     </div>
-
                 </form>
             </div>
             <div class="view-result">
                 <div class="container">
                     <div class="row navi-link">
                         <div class="col-md-3">
-                            <div class="content-box">
-                                <h3><i class="far fa-clock"></i> Last Check</h3>
-                                <div class="cont-result">
-                                    <a href="">${list[0].domain}</a>
-                                    <p>${list[0].services}</p>
+                            <form method="POST" action="viewHistory">
+                                <div class="content-box">
+                                    <h3><i class="far fa-clock"></i> Last Check</h3>
+                                    <div class="col-md-12 cont-result">
+                                        <button class="row" type="submit" name="history" value="${latestRecord.getTARGET()}">
+                                            <a>${latestRecord.getTARGET()}</a>
+                                        </button>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p>DDNS:</p>
+                                                <p>${latestRecord.getDDNS()}</p>
+                                                <p>Net Name:</p>
+                                                <p>${latestRecord.getNETNAME()}</p>
+                                                <p>Scan Date:</p>
+                                                <p>${latestRecord.getDATESCAN()}</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                         <div class="col-md-3">
-                            <div class="content-box">
-                                <h3><i class="fas fa-chart-line"></i> Top Check</h3>
-                                <div class="cont-result">
-                                    <a href="">${list[1].domain}</a>
-                                    <p>${list[1].services}</p>
+                            <form method="POST" action="viewHistory">
+                                <div class="content-box">
+                                    <h3><i class="fas fa-chart-line"></i> Top Check</h3>
+                                    <div class="col-md-12 cont-result">
+                                        <button class="row" type="submit" name="history" value="${mostRecord.getTARGET()}">
+                                            <a>${mostRecord.getTARGET()}</a>
+                                        </button>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p class="row">DDNS:</p>
+                                                <p class="row">${mostRecord.getDDNS()}</p>
+                                                <p class="row">Net Name:</p>
+                                                <p class="row">${mostRecord.getNETNAME()}</p>
+                                                <p class="row">Scan Date:</p>
+                                                <p class="row">${mostRecord.getDATESCAN()}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
-                        <div class="col-md-3">
-                            <div class="content-box">
-                                <h3><i class="fas fa-binoculars"></i> View Report</h3>
-                                <div class="cont-result">
 
+                        <div class="col-md-3">
+                            <form method="POST" action="poor">
+                                <div class="content-box">
+                                    <h3><i class="fas fa-binoculars"></i> View Report</h3>
+                                    <div class="col-md-12 cont-result">
+                                        <button class="row" type="submit" name="history" value="${mostRecord.getTARGET()}">
+                                            <a>${mostRecord.getTARGET()}</a>
+                                        </button>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p class="row">DDNS:</p>
+                                                <p class="row">${mostRecord.getDDNS()}</p>
+                                                <p class="row">Net Name:</p>
+                                                <p class="row">${mostRecord.getNETNAME()}</p>
+                                                <p class="row">Scan Date:</p>
+                                                <p class="row">${mostRecord.getDATESCAN()}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
+
+
                         <div class="col-md-3">
-                            <div class="content-box">
-                                <h3><i class="fas fa-file-export"></i> Export Report</h3>
-                                <div class="cont-result">
-
+                            <form method="POST" action="poor">
+                                <div class="content-box">
+                                    <h3><i class="fas fa-file-export"></i> Export Report</h3>
+                                    <div class="cont-result">
+                                        <button class="row" type="submit" name="history" value="${mostRecord.getTARGET()}">
+                                            <a>${mostRecord.getTARGET()}</a>
+                                        </button>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p class="row">DDNS:</p>
+                                                <p class="row">${mostRecord.getDDNS()}</p>
+                                                <p class="row">Net Name:</p>
+                                                <p class="row">${mostRecord.getNETNAME()}</p>
+                                                <p class="row">Scan Date:</p>
+                                                <p class="row">${mostRecord.getDATESCAN()}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>

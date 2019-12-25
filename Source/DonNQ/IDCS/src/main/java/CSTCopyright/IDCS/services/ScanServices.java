@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  *
@@ -39,7 +38,7 @@ public class ScanServices {
             os.newLine();
             os.flush();
             String responseLine;
-            while (!(responseLine = is.readLine()).equals("[END-PCK]")) {
+            while (!"[END-PCK]".equals((responseLine = is.readLine()))) {
                 System.out.println("Server:" + responseLine);
                 if(responseLine != null && !responseLine.equals("null")) mess += (responseLine);
             }
