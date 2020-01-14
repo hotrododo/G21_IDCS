@@ -35,7 +35,7 @@ def get_open_ports(ip, port_min, port_max):
 	return ports    #RETURN list of port open on range
 
 def nmap_scan_ports(ip, port_min, port_max):
-    ports = get_open_ports(ip, port_min, port_max)
+	ports = get_open_ports(ip, port_min, port_max)
 	ports_list = ','.join(str(port) for port in ports)
 	data = nm.scan(hosts=target, arguments='-sV -p ' + ports_list)       #-sV scan service
 	return data
