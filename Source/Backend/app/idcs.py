@@ -96,10 +96,17 @@ def email_verify():
 @app.route("/idcs/host/get", methods = ['POST'])
 def get_host_from_db():
     # get smt
-    host_stamp = request.json
+    data = request.json
     host = msql.get_host_by_ip(conn, host_stamp)
     if not host:
-        return return_change_status(False)
+        # check task has exits
+        if not msql.get_task_from_db(conn, data):
+            # create a task scan
+            data["status"] = 0
+            data["time_stamp"] = datetime.now()
+            msql.add_task_to_db(conn, data)
+            return jsonify({"status":"task created"})
+        return jsonify({"status":"task processing"})
     return host
 
 @app.route("/idcs/port/get", methods = ['POST'])
@@ -110,7 +117,6 @@ def get_port_from_db():
     if not host:
         return return_change_status(False)
     return host
-
 
 
 
