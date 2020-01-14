@@ -11,7 +11,7 @@ SMTP_PORT = 25
 # SMTP
 # send new password to user mail
 def send_access_code_to_mail(user, access_code, exp_date):
-    message_template = read_template("/Users/mac/Desktop/CP/python/forgot_password_sample.html")
+    message_template = read_template("mail/verify_code_temple.html")
     message = message_template.substitute(full_name=user["fullName"], access_code=access_code, exp_date=exp_date)
     msg = MIMEMultipart()
     msg['From'] = MY_ADDRESS
