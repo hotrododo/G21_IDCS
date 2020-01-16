@@ -21,7 +21,7 @@ def is_open(ip,port):
 
 def get_open_ports(ip, port_min, port_max):
 	ports = []
-	with ThreadPoolExecutor(max_workers=100) as executor:
+	with ThreadPoolExecutor(max_workers=50) as executor:
 		future = {executor.submit(is_open,target,p)
 					for p in range(port_min,port_max + 1)}
 		for f in as_completed(future):

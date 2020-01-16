@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 import database.mysql_utils as msql
 import mail.mail_services as mail
 from nmap_tools import nmap_data_processing, nmap_services
+import controllers._host
+import controllers._task
 
 
 app = Flask(__name__)
@@ -89,23 +91,28 @@ def email_verify():
         if user["verify_code"] == verify[2]:
             # update user type to #2 (FREE Account)
             user["userType"] = 2
-            #  out of date verify code
-            return return_change_status(msql.update_user_type(conn, user) and msql.delete_verify_code(conn, user["userName"]))
+            stt = msql.update_user_type(conn, user) and msql.delete_verify_code(conn, user["userName"])
+            if stt:
+                #  out of date verify code
+
+            return return_change_status(stt)
     return return_change_status(False)
 
 @app.route("/idcs/host/get", methods = ['POST'])
 def get_host_from_db():
     # get smt
-    data = request.json
-    host = msql.get_host_by_ip(conn, host_stamp)
-    if not host:
+    host_stamp = request.json
+    host = _host._get_by_ip(conn, host_stamp)
+    # if host haven't in db or host no longer update in 30 days
+    if not host or datetime(host["time_stamp"]) + timedelta(days = 30) < datetime.now:
         # check task has exits
-        if not msql.get_task_from_db(conn, data):
+        if not _task._get_from_db(conn, data):
             # create a task scan
-            data["status"] = 0
-            data["time_stamp"] = datetime.now()
-            msql.add_task_to_db(conn, data)
-            return jsonify({"status":"task created"})
+            data["status"] = 0      #set status 0 mean
+            data["time_stamp"] = datetime.now()     #set time stamp
+            # add new task to db
+            if _task._add_to_db(conn, data):   
+                return jsonify({"status":"task created"})
         return jsonify({"status":"task processing"})
     return host
 

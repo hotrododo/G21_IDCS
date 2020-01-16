@@ -24,3 +24,7 @@ def nmap_result_to_host(host_result_dict):
 
 def ipv6_check_from_(ipv4):
     return socket.inet_pton(socket.AF_INET6, ipv4)
+
+
+
+
