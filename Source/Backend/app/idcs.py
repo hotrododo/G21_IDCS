@@ -3,11 +3,11 @@ from flaskext.mysql import MySQL
 from werkzeug.security import check_password_hash, generate_password_hash
 import json, random, string
 from datetime import datetime, timedelta
-import database.mysql_utils as msql
 import mail.mail_services as mail
 from nmap_tools import nmap_data_processing, nmap_services
-import controllers._host
-import controllers._task
+import controllers._user as _user
+import controllers._host as _host
+import controllers._task as _task
 
 
 app = Flask(__name__)
@@ -31,7 +31,7 @@ conn = mysql.connect()
 def verify_user():
     user_stamp = request.json
     user_name = next(iter(user_stamp))
-    user = msql.get_user_by_name(conn, user_name)
+    user = _user._get_by_name(conn, user_name)
     if check_password_hash(user["password"], user_stamp[user_name]):
         return jsonify(user)
     return jsonify({"status":"failed"})
@@ -40,7 +40,7 @@ def verify_user():
 @app.route("/idcs/user/update/info", methods=['POST'])
 def update_information():
     user = request.json
-    return return_change_status(msql.update_user_info(conn, user))
+    return return_change_status(_user._update_info(conn, user))
 
 # update user password
 @app.route("/idcs/user/update/password", methods = ['POST'])
@@ -54,7 +54,7 @@ def update_password():
 def add_an_user():
     user = request.json
     user["password"] = generate_password_hash(user["password"])
-    return return_change_status(msql.add_user(conn, user))
+    return return_change_status(_user._add(conn, user))
 
 # 
 # @app.route("/idcs/user/forgot", methods = ['POST'])
@@ -80,23 +80,27 @@ def user_register():
     user["password"] = generate_password_hash(user["password"])
     user["credits"] = 0
     user["userType"] = 3
-    return return_change_status(msql.add_user(conn, user))
+    return return_change_status(_user._add(conn, user))
 
 
 @app.route("/idcs/email/verify", methods = ['POST'])
 def email_verify():
     user = request.json
-    verify = msql.get_verify_code(conn, user)
+    verify = _user._get_verify_code(conn, user)
     if verify is not None:
         if user["verify_code"] == verify[2]:
             # update user type to #2 (FREE Account)
             user["userType"] = 2
-            stt = msql.update_user_type(conn, user) and msql.delete_verify_code(conn, user["userName"])
+            stt = _user._update_user_type(conn, user)
             if stt:
                 #  out of date verify code
-
-            return return_change_status(stt)
+                _user._delete_verify_code(conn, user["userName"])
+                return return_change_status(stt)
     return return_change_status(False)
+
+# 
+# HOST
+# 
 
 @app.route("/idcs/host/get", methods = ['POST'])
 def get_host_from_db():
@@ -116,11 +120,20 @@ def get_host_from_db():
         return jsonify({"status":"task processing"})
     return host
 
+@app.route("/idcs/task/get", methods = ['POST'])
+def get_task_from_db():
+    task_stamp = request.json
+    task = _task._get_by_user_name()
+    # !!!Missing convert list to dict
+    if task:
+        return task
+    return return_change_status(False)
+
 @app.route("/idcs/port/get", methods = ['POST'])
 def get_port_from_db():
     # get smt
     host_stamp = request.json
-    host = msql.get_host_by_ip(conn, host_stamp["ipv4"])
+    host = _user._get_by_ip(conn, host_stamp["ipv4"])
     if not host:
         return return_change_status(False)
     return host
