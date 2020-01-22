@@ -14,3 +14,4 @@ def user_list_to_dict(user):
 def user_dict_to_list(user):
     return [user["userName"],user["password"],user["fullName"],user["gender"],user["emailAddress"],\
         user["phoneNumber"],user["address"],user["credits"],user["userType"]]
+

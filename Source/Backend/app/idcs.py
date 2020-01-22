@@ -1,24 +1,29 @@
 from flask import Flask, request, jsonify
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from flaskext.mysql import MySQL
 from werkzeug.security import check_password_hash, generate_password_hash
-import json, random, string
 from datetime import datetime, timedelta
-import mail.mail_services as mail
 from nmap_tools import nmap_data_processing, nmap_services
+import json, random, string
+import mail.mail_services as mail
 import controllers._user as _user
 import controllers._host as _host
 import controllers._task as _task
+import controllers._port as _port
 
 
 app = Flask(__name__)
 mysql = MySQL()
+#Read config file
+with open('app.conf') as json_data_file:
+    _config = json.load(json_data_file)
 
 # MySQL configurations
-app.config['MYSQL_DATABASE_USER'] = 'admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = '111111'
-app.config['MYSQL_DATABASE_DB'] = 'idcs'
-app.config['MYSQL_DATABASE_HOST'] = '54.199.156.1'
-app.config['MYSQL_DATABASE_PORT'] = 3306
+app.config['MYSQL_DATABASE_USER'] = _config["mysql"]["MYSQL_DATABASE_USER"]
+app.config['MYSQL_DATABASE_PASSWORD'] = _config["mysql"]["MYSQL_DATABASE_PASSWORD"]
+app.config['MYSQL_DATABASE_DB'] = _config["mysql"]["MYSQL_DATABASE_DB"]
+app.config['MYSQL_DATABASE_HOST'] = _config["mysql"]["MYSQL_DATABASE_HOST"]
+app.config['MYSQL_DATABASE_PORT'] = _config["mysql"]["MYSQL_DATABASE_PORT"]
 mysql.init_app(app)
 conn = mysql.connect()
 
@@ -30,9 +35,9 @@ conn = mysql.connect()
 @app.route("/idcs/user/verify", methods=['POST'])
 def verify_user():
     user_stamp = request.json
-    user_name = next(iter(user_stamp))
-    user = _user._get_by_name(conn, user_name)
-    if check_password_hash(user["password"], user_stamp[user_name]):
+    user_name = user_stamp["userName"]
+    # user = _user._get_by_name(conn, user_name)
+    if check_password_hash(user_stamp["password"], user_stamp[user_name]):
         return jsonify(user)
     return jsonify({"status":"failed"})
 
@@ -158,27 +163,25 @@ def return_change_status(b):
         return jsonify({"status":"failed"})
 
 
+def do_task():
+    task = _task._get_oldest(conn)
+    if task is not None:
+        host = _host._scan_host(task[1])
+        if host is not None:
+            ports = _port._nmap_scan(task[1])
+            if ports is not None:
 
 
+
+
+def excute_task():
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        future = executor.submit(do_task)
 #
 #  
 # 
 
 if __name__ == '__main__':
     app.run()
+    excute_task()
 
-# 
-# 
-# 
-class User:
-    def __init__(self, user_name, password, full_name, gender, email, phone, address, credit, user_type):
-        super().__init__()
-        self.user_name = user_name
-        self.password = password
-        self.full_name = full_name
-        self.gender = gender
-        self.email = email
-        self.phone = phone
-        self.address = address
-        self.credits = credit
-        self.user_type = user_type

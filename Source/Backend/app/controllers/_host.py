@@ -59,7 +59,7 @@ def _scan_host(host):
     arguments='-sn --script whois-ip')     #-sn no port scan
     result = nm._scan(hosts, arguments)
 	if result['nmap']['scanstats']['uphosts'] == '0':
-        return False      #Return F when hots down
+        return None      #Return F when hots down
 	data = _ed._result_to_host(result)
 	return data
         

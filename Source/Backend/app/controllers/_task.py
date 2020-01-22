@@ -14,6 +14,12 @@ def _get_from_db(conn, data):
     result = _sql._get_an_item(conn, sql_string)
     return result
 
+# status = 0 : doesn't excute.
+def _get_oldest(conn):
+    sql_string = "SELECT TOP 1 * FROM task_tbl WHERE status = 0 ORDER BY time_stamp DESC"
+    result = _sql._get_an_item(conn, sql_string)
+    return result
+
 
 def _add_to_db(conn, data):
     sql_string = "INSERT INTO task_tbl(u_id, host_ip, status, time_stamp) \
