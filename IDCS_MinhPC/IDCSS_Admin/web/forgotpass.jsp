@@ -48,7 +48,7 @@
                                         <div class="col-md-12">
                                             <div class="position-relative form-group"><label for="exampleEmail"
                                                     class="">Email</label><input name="email" id="exampleEmail"
-                                                    placeholder="Email here..." type="email" class="form-control">
+                                                    placeholder="Email here..." type="text" class="form-control" required>
                                             </div>
                                         </div>
                                     </div>

@@ -16,9 +16,8 @@
     <title>IDCS - LOGIN </title>
     <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
-    <meta name="description" content="Inline validation is very easy to implement using the Architect Framework.">
     <meta name="msapplication-tap-highlight" content="no">
-    <link href="./main.css" rel="stylesheet">
+    <link href="../${pageContext.request.contextPath}/main.css" rel="stylesheet">
 </head>
 
 <body>
@@ -27,12 +26,6 @@
             <div class="h-100">
                 <div class="h-100 no-gutters row">
                     <div class="bgLogin d-none d-lg-block col-lg-4">
-                        <!-- <div style="width: 100%; display: inline-block;">
-                            <div class="position-relative h-100 d-flex justify-content-center align-items-center "
-                                tabindex="-1">
-                                <div style="background-image: url(&#39;'./assets/images/originals/citydark.jpg'&#39;);"></div>
-                            </div>
-                        </div> -->
                     </div>
                     <div class="h-100 d-flex bg-white justify-content-center align-items-center col-md-12 col-lg-8">
                         <div class="mx-auto app-login-box col-sm-12 col-md-10 col-lg-9">
