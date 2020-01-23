@@ -87,7 +87,7 @@ def _get_open_ports(ip, port_min, port_max):
 	return ports    #RETURN list of port open on range
 
 
-
+# scan port with nmap
 def _nmap_scan(ip, port_min = 0, port_max = 2000):
 	ports = _get_open_ports(ip, port_min, port_max)
 	ports_list = ','.join(str(port) for port in ports)
@@ -95,7 +95,7 @@ def _nmap_scan(ip, port_min = 0, port_max = 2000):
     result = _nm._scan(ip, arguments)
 	return result
 
-
+# store new scan to db
 def _store_in_db(conn, result):
     ip = next(iter(result["scan"]))
     list_port = *result["scan"][ip]["tcp"].keys()
@@ -110,4 +110,4 @@ def _store_in_db(conn, result):
         else:
             port = [port_num, ip, service_name, version, status, cpe]
             result = _add_to_db(conn, port)
-    return result
+    return result  #result = True/False
