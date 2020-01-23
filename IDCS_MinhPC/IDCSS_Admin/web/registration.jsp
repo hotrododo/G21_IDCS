@@ -18,7 +18,7 @@
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="Inline validation is very easy to implement using the Architect Framework.">
     <meta name="msapplication-tap-highlight" content="no">
-    <link href="./main.css" rel="stylesheet">
+    <link href="../${pageContext.request.contextPath}/main.css" rel="stylesheet">
 </head>
 
 <body>
@@ -36,7 +36,7 @@
                                     account</h6>
                             </h4>
                             <div>
-                                <form class="">
+                                <form action="register" method="POST">
                                     <div class="form-row">
                                         <div class="col-md-6">
                                             <div class="position-relative form-group"><label for="Email" class=""><span
@@ -46,15 +46,15 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="position-relative form-group"><label for="Name" class=""><span
-                                                        class="text-danger">*</span> Name</label><input name="text"
-                                                    id="Name" placeholder="Name here..." type="text"
+                                                        class="text-danger">*</span> Name</label><input name="fullname"
+                                                    id="Name" placeholder="Full Name here..." type="text"
                                                     class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="position-relative form-group"><label for="Account"
                                                     class=""><span class="text-danger">*</span> Account</label><input
-                                                    name="Account" id="Account" placeholder="Account here..."
+                                                    name="account" id="Account" placeholder="Account here..."
                                                     type="text" class="form-control"></div>
                                         </div>
                                         <div class="col-md-6">
@@ -87,13 +87,13 @@
                                         <div class="col-md-6">
                                             <div class="position-relative form-group"><label for="Address"
                                                     class=""><span class="text-danger">*</span> Address</label><input
-                                                    name="email" id="Address" placeholder="Address here..." type="text"
+                                                    name="address" id="Address" placeholder="Address here..." type="text"
                                                     class="form-control"></div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="position-relative form-group">
                                                 <label for="Select" class="">Select</label>
-                                                <select name="select" id="Select" class="form-control">
+                                                <select name="gender" id="Select" class="form-control">
                                                     <option>Male</option>
                                                     <option>Female</option>
                                                 </select>
@@ -108,7 +108,7 @@
                                         <h5 class="mb-0">Already have an account? <a href="login.jsp"
                                                 class="text-primary">Sign in</a></h5>
                                         <div class="ml-auto">
-                                            <button
+                                            <button type="submit"
                                                 class="btn-wide btn-pill btn-shadow btn-hover-shine btn btn-primary btn-lg">Create
                                                 Account</button>
                                         </div>

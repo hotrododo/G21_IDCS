@@ -6,21 +6,23 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Constant;
+import javax.servlet.http.HttpSession;
 import model.UserAccount;
+import utils.MyUtils;
 
 /**
  *
  * @author macbook
  */
-@WebServlet(name = "register", urlPatterns = {"/register"})
-public class RegistrationServlet extends HttpServlet {
+@WebServlet(name = "manager", urlPatterns = {"/manager"})
+public class ManagerServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,8 +35,21 @@ public class RegistrationServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher dispatcher;
-        dispatcher = this.getServletContext().getRequestDispatcher("/registration.jsp");
+        HttpSession session = request.getSession();
+        // Check User has logged on
+        UserAccount loginedUser = MyUtils.getLoginedUser(session);
+
+        // Not logged in
+        if (loginedUser == null) {
+            // Redirect to login page.
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        //get list user to display
+        
+//        ArrayList<UserAccount> listUser = ...;
+//        request.setAttribute("listUser", listUser);
+        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/home.jsp");
         dispatcher.forward(request, response);
     }
 
@@ -64,34 +79,7 @@ public class RegistrationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserAccount user = new UserAccount();
-        user.setUserName(request.getParameter("account"));
-        user.setFullName(request.getParameter("fullname"));
-        user.setEmailAddress(request.getParameter("email"));
-        user.setPhoneNumber(request.getParameter("phoneNumDialog"));
-        user.setPassword(request.getParameter("password"));
-        String repass = request.getParameter("repeatPass");
-        String address = request.getParameter("address");
-        String gender = request.getParameter("gender");
-
-        try {
-            //check user if exist
-            
-            
-//            if (db.findUser(conn, user.getUserName()) != null) {
-//                request.setAttribute("uname", user.getUserName());
-//                request.setAttribute("Notif", Constant.registFail_ExitsAccount);
-//                RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/registration.jsp");
-//                dispatcher.forward(request, response);
-//            } else {
-////                db.(conn, user);
-//                request.setAttribute("Notif", Constant.registSuccess);
-//                response.sendRedirect(request.getContextPath() + "/login.jsp");
-//            }
-
-        } catch (Exception e) {
-
-        }
+        processRequest(request, response);
     }
 
     /**
