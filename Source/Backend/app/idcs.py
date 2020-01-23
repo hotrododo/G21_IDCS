@@ -18,6 +18,8 @@ mysql = MySQL()
 with open('app.conf') as json_data_file:
     _config = json.load(json_data_file)
 
+
+
 # MySQL configurations
 app.config['MYSQL_DATABASE_USER'] = _config["mysql"]["MYSQL_DATABASE_USER"]
 app.config['MYSQL_DATABASE_PASSWORD'] = _config["mysql"]["MYSQL_DATABASE_PASSWORD"]
@@ -177,6 +179,11 @@ def do_task():
 def excute_task():
     with ThreadPoolExecutor(max_workers=5) as executor:
         future = executor.submit(do_task)
+
+
+def check_update():
+    
+    result = _vult._update_vult_from_file(conn, _config["cve_file"])
 #
 #  
 # 
