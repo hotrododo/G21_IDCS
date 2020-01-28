@@ -1,0 +1,8 @@
+# Nmap 7.80 scan initiated Mon Jan 27 16:17:13 2020 as: nmap -oX - -p 3389 -o ./-sV 123.31.41.27
+Nmap scan report for static.vnpt.vn (123.31.41.27)
+Host is up (0.0064s latency).
+
+PORT     STATE SERVICE
+3389/tcp open  ms-wbt-server
+
+# Nmap done at Mon Jan 27 16:17:13 2020 -- 1 IP address (1 host up) scanned in 0.09 seconds

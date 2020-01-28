@@ -51,9 +51,9 @@ def test_user_verify():
     print(dat)
 
 def test_user_resgiter(user_name):
-    URL = "http://127.0.0.1:5000/idcs/user/send-email"
+    URL = "http://127.0.0.1:5000/idcs/user/register"
     data = {"userName":user_name,"password":user_name,"fullName":"Mr. Sample","gender":1,"emailAddress":"hotro.dodo@gmail.com", \
-        "phoneNumber":"0358008828","address":"HaNoi, Viet Nam","credits":1,"userType":4}
+        "phoneNumber":"0358008828","address":"HaNoi, Viet Nam","credits":1,"userType":3}
     r = requests.post(URL, json = data, headers = headers)
     dat = r.json() 
     print(dat)
@@ -61,8 +61,7 @@ def test_user_resgiter(user_name):
 # TEST MAIL
 def test_mail_send(user_name, email):
     URL = "http://127.0.0.1:5000/idcs/user/send-email"
-    data = {"userName":user_name,"password":user_name,"fullName":"Mr. Sample","gender":1,"emailAddress":email, \
-        "phoneNumber":"0358008828","address":"HaNoi, Viet Nam","credits":1,"userType":0}
+    data = {"userName":user_name,"password":user_name,"fullName":"Mr. Sample","emailAddress":email}
     r = requests.post(URL, json = data, headers = headers)
     # extracting data in json format 
     dat = r.json() 
@@ -70,12 +69,29 @@ def test_mail_send(user_name, email):
 
 def test_mail_verify(user_name, email, code):
     URL = "http://127.0.0.1:5000/idcs/email/verify"
-    data = {"userName":user_name,"emailAddress":email,"verify_code":code,"credits":1,"userType":6}
+    data = {"userName":user_name,"emailAddress":email,"verify_code":code}
     r = requests.post(URL, json = data, headers = headers)
     # extracting data in json format 
     dat = r.json() 
     print(dat)
 
+def test_get_list_users():
+    URL = "http://127.0.0.1:5000/idcs/user/list"
+    r = requests.post(URL, headers = headers)
+    dat = r.json() 
+    print(dat)
 
+def test_get_host(ip):
+    URL = "http://127.0.0.1:5000/idcs/host/get"
+    data = {"ipv4":ip}
+    r = requests.post(URL, json = data, headers = headers)
+    dat = r.json() 
+    print(dat)
 
-test_user_add()
+# test_user_add()
+# test_user_update()
+# test_get_list_users()
+# test_user_resgiter("thanhdn")
+# test_mail_send("thanhdn", "hotro.dodo@gmail.com")
+test_mail_verify("thanhdn", "hotro.dodo@gmail.com", "WDpdad")
+# test_get_host("123.31.41.27")

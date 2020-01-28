@@ -1,7 +1,6 @@
 import database.mysql_excute as _sql
 import nmap_tools._nmap as _nm
 import nmap_tools._extract_data as _ed
- import nmap_tools._extract_data as _ed
 
 class _host:
     def __init__(self, ipv4, ipv6, dns, net_name, country, oraganization, last_updated):
@@ -56,12 +55,11 @@ def _delete_from_db(conn, host):
 # 
 def _scan_host(host):
     result = {}
-	hosts = host["ipv4"]
-    arguments='-sn --script whois-ip')     #-sn no port scan
+    hosts = host["ipv4"]
+    arguments='-sn --script whois-ip'     #-sn no port scan
     result = nm._scan(hosts, arguments)
-	if result['nmap']['scanstats']['uphosts'] == '0':
+    if result['nmap']['scanstats']['uphosts'] == '0':
         return None      #Return F when hots down
-	result = _ed._result_to_host(result)
-	return result
+    return result
 
         

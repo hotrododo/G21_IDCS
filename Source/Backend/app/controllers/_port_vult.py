@@ -11,7 +11,7 @@ class _port_vult:
 def _get_by_id(conn, port_id):
     sql_string = "SELECT * FROM port_vult_tbl  WHERE port_id = {0}"
     sql_string.format(port_id)
-    result = _sql._get_an_item(conn, sql_string)
+    result = _sql._get_list_items(conn, sql_string)
     return data
 
 

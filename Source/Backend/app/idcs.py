@@ -3,19 +3,25 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from flaskext.mysql import MySQL
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
-from nmap_tools import nmap_data_processing, nmap_services
 import json, random, string
 import mail.mail_services as mail
 import controllers._user as _user
 import controllers._host as _host
 import controllers._task as _task
 import controllers._port as _port
+import os.path
+import controllers.vuln_scanner as _vs
+import controllers._port_vult as _pv
+import controllers._convert as _cv
+import controllers._vult as _vult
 
 
 app = Flask(__name__)
 mysql = MySQL()
 #Read config file
-with open('app.conf') as json_data_file:
+my_path = os.path.abspath(os.path.dirname(__file__))
+path = os.path.join(my_path, "app.conf")
+with open(path) as json_data_file:
     _config = json.load(json_data_file)
 
 
@@ -63,6 +69,11 @@ def add_an_user():
     user["password"] = generate_password_hash(user["password"])
     return return_change_status(_user._add(conn, user))
 
+# get list users from db
+@app.route("/idcs/user/list", methods = ['POST'])
+def get_list_users():
+    return _user._get_list(conn)
+
 # 
 # @app.route("/idcs/user/forgot", methods = ['POST'])
 # def forgot_password():
@@ -85,7 +96,8 @@ def send_email_code():
 def user_register():
     user = request.json
     user["password"] = generate_password_hash(user["password"])
-    user["credits"] = 0
+    user["credits"] = 1
+    # userType = 3 mean account have been created.
     user["userType"] = 3
     return return_change_status(_user._add(conn, user))
 
@@ -109,11 +121,12 @@ def email_verify():
 # HOST
 # 
 
+# input host= {"ipv4"=ipv4}
 @app.route("/idcs/host/get", methods = ['POST'])
 def get_host_from_db():
     # get smt
     host_stamp = request.json
-    host = _host._get_by_ip(conn, host_stamp)
+    host_db = _host._get_by_ip(conn, host_stamp)
     # if host haven't in db or host no longer update in 30 days
     if not host or datetime(host["time_stamp"]) + timedelta(days = 30) < datetime.now:
         # check task has exits
@@ -125,36 +138,36 @@ def get_host_from_db():
             if _task._add_to_db(conn, data):   
                 return jsonify({"status":"task created"})
         return jsonify({"status":"task processing"})
+    host = _cv.host_to_dict(host_db)
+    ports_db = _port._get_by_host(host)
+    if ports_db is not None:
+        ports = _cv.ports_to_dict(ports_db)
+        for port in ports:
+            vults = _pv._get_by_id(conn, port["port_id"])
+            if vults is not None:
+                list_vult = {}
+                for v in vults:
+                    vult = _vult.get_by_num(conn, v[1])
+                    if vult is not None:
+                        list_vult[v[1]] = {"cve_num":v[1], "cve_desc":vult[1]}
+            port["vult"] = list_vult
+    host["ports"] = ports
     return host
+
 
 @app.route("/idcs/task/get", methods = ['POST'])
 def get_task_from_db():
-    task_stamp = request.json
-    task = _task._get_by_user_name()
-    # !!!Missing convert list to dict
-    if task:
-        return task
+    user = request.json
+    tasks = _task._get_by_user_name(conn, user["user_name"])
+    if tasks:
+        return _cv.tasks_to_dict(tasks)
     return return_change_status(False)
-
-@app.route("/idcs/port/get", methods = ['POST'])
-def get_port_from_db():
-    # get smt
-    host_stamp = request.json
-    host = _user._get_by_ip(conn, host_stamp["ipv4"])
-    if not host:
-        return return_change_status(False)
-    return host
-
 
 
 # genarate random code
 def genarate_random_code(code_lenght):
     letters = string.ascii_letters
     return ''.join(random.choice(letters) for i in range(code_lenght))
-
-def host_list_to_dict(data):
-    return None
-
 
 
 # return value with dict 'status':'<status_task>'
@@ -165,20 +178,70 @@ def return_change_status(b):
         return jsonify({"status":"failed"})
 
 
-def do_task():
-    task = _task._get_oldest(conn)
-    if task is not None:
-        host = _host._scan_host(task[1])
-        if host is not None:
-            ports = _port._nmap_scan(task[1])
-            if ports is not None:
+def do_task(task):
+    last_updated = datetime.now()
+    # scan host with nmap
+    s_host = _host._scan_host(task[1])
+    if s_host is None or s_host["nmap"]["scanstats"]["uphosts"] == 0:
+        return {"status":"host down or not public"}
+    # extract host from nmap scan to dict
+    host = _ed._result_to_host(s_host)
+    # check host in db
+    host_stamp = _host._get_by_ip(conn, host)
+    if host_stamp is None:
+        # add new host scan to db
+        if _host.add_host_to_db(conn, host):
+            print("host added!")
+        else:
+            print("cannot add host")
+    else:
+        # update new host scan to db
+        if _host._update_to_db(conn, host):
+            print("host updated!")
+        else:
+            print("cannot update host")
+    # scan port with nmap
+    s_ports = _port._nmap_scan(task[1])
+    if s_ports is None or s_ports["scan"][task[1]]["tcp"] is None:
+        return {"status":"no port open"}
+    ports = _ed._result_to_ports(s_ports)
+    for port in ports:
+        port_tmp = _port._check_exits_on_db(port)
+        result = None
+        if port_tmp is not None:
+            # set port_id
+            port["port_id"] = port_tmp[0]
+            result = _port._update_by_id(conn, port)
+        else:
+            result = _port._add_to_db(conn, port)
+        if result:
+            print("updated port: {} of {}".format(port["port_num"], port["host_ip"]))
+        # get port in db
+        port = _port._check_exits_on_db(port)
+        if port["service_name"] == "ms-wbt-server":
+            vults = _vs.scan(port["host_ip"],port["port_num"],"windows","rdp")
+            if vults is not None:
+                for vult in vults:
+                    port_vult = [port["port_id"], vult, last_updated]
+                    if _pv._get_by_id(conn, port["port_id"]) is not None:
+                        result = _pv._update_by_id(conn, port_vult)
+                    else:
+                        result = _pw._add_to_db(conn, port_vult)
+                    if result:
+                        print("update completed")
+
+
 
 
 
 
 def excute_task():
+    # get list task does not excuted
+    tasks = _task._get_list_new(conn)
+    if tasks is None:
+        return {"status":"no task to scan"}
     with ThreadPoolExecutor(max_workers=5) as executor:
-        future = executor.submit(do_task)
+        future = {executor.submit(do_task, task) for task in tasks}
 
 
 def check_update():

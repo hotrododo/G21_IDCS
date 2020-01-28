@@ -24,7 +24,8 @@ def _get_by_id(conn, port):
     data = _sql._get_an_item(conn, sql_string)
     return data
 
-
+# check port has exits on database
+# return port if has exits / None if not exits
 def _check_exits_on_db(host_ip, port_num):
     sql_string = "SELECT * FROM port_tbl p WHERE p.port_num = {0} AND p.host_ip = {1}"
     sql_string.format(host_ip, port_num)
@@ -89,25 +90,20 @@ def _get_open_ports(ip, port_min, port_max):
 
 # scan port with nmap
 def _nmap_scan(ip, port_min = 0, port_max = 2000):
-	ports = _get_open_ports(ip, port_min, port_max)
-	ports_list = ','.join(str(port) for port in ports)
-	arguments='-sV -p ' + ports_list       #-sV scan service
+    ports = _get_open_ports(ip, port_min, port_max)
+    ports_list = ','.join(str(port) for port in ports)
+    arguments='-sV -p ' + ports_list       #-sV scan service
     result = _nm._scan(ip, arguments)
-	return result
+    return result
 
 # store new scan to db
-def _store_in_db(conn, result):
-    ip = next(iter(result["scan"]))
-    list_port = *result["scan"][ip]["tcp"].keys()
-    for port_num in list_port:
-        service_name = result["scan"][ip]["tcp"][port_num]["name"]
-        version = result["scan"][ip]["tcp"][port_num]["version"]
-        status = result["scan"][ip]["tcp"][port_num]["state"]
-        cpe = result["scan"][ip]["tcp"][port_num]["cpe"]
-        if (tmp = _check_exits_on_db()):
-            port = [tmp[0], port_num, ip, service_name, version, status, cpe]
-            result = _update_by_id(conn, port)
-        else:
-            port = [port_num, ip, service_name, version, status, cpe]
-            result = _add_to_db(conn, port)
+def _store_in_db(conn, port):
+    result = None
+    tmp = _check_exits_on_db(port["host_ip"], port["port_num"])
+    if tmp:
+        port = [tmp[0], port["port_num"], port["host_ip"], port["service_name"], port["version"], port["status"], port["cpe"]]
+        result = _update_by_id(conn, port)
+    else:
+        port = [port["port_num"], port["host_ip"], port["service_name"], port["version"], port["status"], port["cpe"]]
+        result = _add_to_db(conn, port)
     return result  #result = True/False

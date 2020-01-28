@@ -15,8 +15,8 @@ def _get_from_db(conn, data):
     return result
 
 # status = 0 : doesn't excute.
-def _get_oldest(conn):
-    sql_string = "SELECT TOP 1 * FROM task_tbl WHERE status = 0 ORDER BY time_stamp DESC"
+def _get_list_new(conn):
+    sql_string = "SELECT * FROM task_tbl WHERE status = 0 ORDER BY time_stamp DESC"
     result = _sql._get_an_item(conn, sql_string)
     return result
 

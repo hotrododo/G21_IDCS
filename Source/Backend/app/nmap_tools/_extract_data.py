@@ -25,5 +25,16 @@ def ipv6_check_from_(ipv4):
     return socket.inet_pton(socket.AF_INET6, ipv4)
 
 
-
+def _result_to_ports(result):
+    ports = {}
+    ip = next(iter(result["scan"]))
+    list_port = result["scan"][ip]["tcp"].keys()
+    for port_num in list_port:
+        service_name = result["scan"][ip]["tcp"][port_num]["name"]
+        version = result["scan"][ip]["tcp"][port_num]["version"]
+        status = result["scan"][ip]["tcp"][port_num]["state"]
+        cpe = result["scan"][ip]["tcp"][port_num]["cpe"]
+        port = {"port_num":port_num, "host_ip":ip, "service_name":service_name, "version":version, "status":status, "cpe":cpe}
+        ports[port_num] = port
+    return ports
 

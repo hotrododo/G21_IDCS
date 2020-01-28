@@ -17,7 +17,7 @@ def _get_by_name(conn, user_name):
 def _get_list(conn):
     sql_string = ("SELECT * FROM user_tbl")
     data = _sql._get_list_items(conn, sql_string)
-    return data
+    return _convert.users_to_dict(data)
 
 # return True when update completed, False when failed.
 def _update_info(conn, user):

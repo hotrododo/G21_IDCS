@@ -2,6 +2,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 from string import Template
+import os
 
 #SMTP configurations
 MY_ADDRESS = 'noreply.idcs@gmail.com'
@@ -11,7 +12,8 @@ SMTP_PORT = 25
 # SMTP
 # send new password to user mail
 def send_access_code_to_mail(user, access_code, exp_date):
-    message_template = read_template("mail/verify_code_temple.html")
+    dirname, tail = os.path.split(os.path.dirname(__file__))
+    message_template = read_template(os.path.join(dirname, "mail/verify_code_temple.html"))
     message = message_template.substitute(full_name=user["fullName"], access_code=access_code, exp_date=exp_date)
     msg = MIMEMultipart()
     msg['From'] = MY_ADDRESS
