@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <!doctype html>
 <html lang="en">
 
@@ -209,14 +210,15 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="mytable">
+                                                    <c:forEach items="${listUser}" var="i" varStatus="list">
                                                         <tr>
-                                                            <td scope="row">1</td>
-                                                            <td class="text-center">@mdo</td>
-                                                            <td class="text-center">Mark</td>
-                                                            <td class="text-center">Otto@email.com</td>
-                                                            <td class="text-center">0912382491</td>
-                                                            <td class="text-center">ha noi</td>
-                                                            <td class="text-center">0xxx 0xxx 0xxx 0xxx</td>
+                                                            <td scope="row">${list.index + 1}</td>
+                                                            <td class="text-center">${i.userName}</td>
+                                                            <td class="text-center">${i.fullName}</td>
+                                                            <td class="text-center">${i.emailAddress}</td>
+                                                            <td class="text-center">${i.phoneNumber}</td>
+                                                            <td class="text-center">${i.address}</td>
+                                                            <td class="text-center">${i.expiryDate}</td>
                                                             <td class="text-center">male</td>
                                                             <td class="text-center">
                                                                 <div class="badge badge-warning">Reset pass</div>
@@ -228,44 +230,7 @@
                                                                 </button>
                                                             </td>
                                                         </tr>
-                                                        <tr>
-                                                            <td scope="row">2</td>
-                                                            <td class="text-center">@2mdo</td>
-                                                            <td class="text-center">2Mark</td>
-                                                            <td class="text-center">2Otto@email.com</td>
-                                                            <td class="text-center">0322223411</td>
-                                                            <td class="text-center">nam dinh</td>
-                                                            <td class="text-center">2xxx 2xxx 2xxx 2xxx</td>
-                                                            <td class="text-center">female</td>
-                                                            <td class="text-center">
-                                                                <div class="badge badge-warning">Reset pass</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button type="button" class="btn mr-2 mb-2 btn-primary"
-                                                                        data-toggle="modal" data-target="#dialogModal">
-                                                                    Details
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td scope="row">3</td>
-                                                            <td class="text-center">@3mdo</td>
-                                                            <td class="text-center">3Mark</td>
-                                                            <td class="text-center">3Otto@idcs.com</td>
-                                                            <td class="text-center">0847283491</td>
-                                                            <td class="text-center">Ninh Binh</td>
-                                                            <td class="text-center">3xxx 3xxx 3xxx 3xxx</td>
-                                                            <td class="text-center">Male</td>
-                                                            <td class="text-center">
-                                                                <!-- <div class="badge badge-warning">Reset pass</div> -->
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button type="button" class="btn mr-2 mb-2 btn-primary"
-                                                                        data-toggle="modal" data-target="#dialogModal">
-                                                                    Details
-                                                                </button>
-                                                            </td>
-                                                        </tr>
+                                                    </c:forEach>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -298,6 +263,7 @@
         </div>
         <script type="text/javascript" src="../${pageContext.request.contextPath}/assets/scripts/main.js"></script>
         <script type="text/javascript" src="../${pageContext.request.contextPath}/assets/scripts/script.js"></script>
+
     </body>
 
 </html>

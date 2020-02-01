@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import model.UserAccount;
 import utils.MyUtils;
+import utils.fakedataa;
 
 /**
  *
@@ -35,20 +36,22 @@ public class ManagerServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        // Check User has logged on
-        UserAccount loginedUser = MyUtils.getLoginedUser(session);
-
-        // Not logged in
-        if (loginedUser == null) {
-            // Redirect to login page.
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
+        ArrayList<UserAccount> listUser = new ArrayList<>();
+//        HttpSession session = request.getSession();
+//        // Check User has logged on
+//        UserAccount loginedUser = MyUtils.getLoginedUser(session);
+//
+//        // Not logged in
+//        if (loginedUser == null) {
+//            // Redirect to login page.
+//            response.sendRedirect(request.getContextPath() + "/login");
+//            return;
+//        }
         //get list user to display
-        
+
 //        ArrayList<UserAccount> listUser = ...;
-//        request.setAttribute("listUser", listUser);
+        listUser = fakedataa.listUser();
+        request.setAttribute("listUser", listUser);
         RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/home.jsp");
         dispatcher.forward(request, response);
     }
