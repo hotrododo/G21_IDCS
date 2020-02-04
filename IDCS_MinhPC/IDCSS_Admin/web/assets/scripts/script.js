@@ -5,6 +5,11 @@ $(document).ready(function(){
         var $row = $(this).closest("tr");    // Find the row
         var $tds = $row.find("td");
         $.each($tds, function (index, value){
+            if (index == 1) {
+                $("#account").val($(value).text());
+                $("#account1").val($(value).text());
+            }
+            
             if (index == 2) {
                 $("#fullname").val($(value).text());
             }

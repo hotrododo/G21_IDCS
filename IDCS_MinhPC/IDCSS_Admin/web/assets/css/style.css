@@ -51,3 +51,9 @@ p {
     }
 
 }
+.alertPopup{
+    border: none;
+    max-width: 65px;
+    text-align: center;
+    text-transform: uppercase;
+}

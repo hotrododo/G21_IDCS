@@ -131,7 +131,7 @@ public class LoginServlet extends HttpServlet {
 //                response.sendRedirect(request.getContextPath() + "/");
 //            }
 //        }
-    response.sendRedirect(request.getContextPath() + "/manager");
+    response.sendRedirect(request.getContextPath() + "/NewAccount");
     }
 
     /**

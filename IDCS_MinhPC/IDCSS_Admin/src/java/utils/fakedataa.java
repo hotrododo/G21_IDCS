@@ -37,6 +37,7 @@ public class fakedataa {
         listUser.add(user);
         
         dateConverted = null;
+        user = new UserAccount();
         user.setUserName("minhpc");
         user.setFullName("Pham Cong Minh");
         user.setEmailAddress("minhpc@gmail.com");
@@ -49,6 +50,7 @@ public class fakedataa {
         listUser.add(user);
 
         dateConverted = null;
+        user = new UserAccount();
         user.setUserName("tuannq");
         user.setFullName("Nguyen Quy Tuan");
         user.setEmailAddress("tuannq@gmail.com");
