@@ -30,15 +30,16 @@ def _update_info(conn, user):
             user["emailAddress"], user["phoneNumber"], user["address"], \
             user["credits"], user["userType"], user["userName"])
         result = _sql._excute_without_return(conn, sql_string)
-    return result
+        return result
+    return None
 
 def _update_password(conn, user_name, password):
     user_temp = _get_by_name(conn, user_name)
     if not user_temp: 
         sql_string = "UPDATE user_tbl u SET u.password = {0} WHERE u.user_name = {1}".format(password, user_name)
         result = _sql._excute_without_return(conn, sql_string)
-    return result
-            
+        return result
+    return None
         
     
 def _add(conn, user):
@@ -48,7 +49,8 @@ def _add(conn, user):
             phone, address, credits, user_type) \
             VALUES('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},{8})".format(*_convert.user_dict_to_list(user))
         result = _sql._excute_without_return(conn, sql_string)
-    return result
+        return result
+    return None
 
 
 
