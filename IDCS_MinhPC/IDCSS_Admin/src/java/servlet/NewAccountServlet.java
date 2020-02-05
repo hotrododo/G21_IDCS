@@ -6,6 +6,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,17 +14,15 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import model.UserAccount;
-import utils.MyUtils;
 import utils.fakedataa;
 
 /**
  *
  * @author macbook
  */
-@WebServlet(name = "manager", urlPatterns = {"/manager"})
-public class ManagerServlet extends HttpServlet {
+@WebServlet(name = "NewAccount", urlPatterns = {"/NewAccount"})
+public class NewAccountServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -52,7 +51,7 @@ public class ManagerServlet extends HttpServlet {
 //        ArrayList<UserAccount> listUser = ...;
         listUser = fakedataa.listUser();
         request.setAttribute("listUser", listUser);
-        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/home.jsp");
+        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/newaccount.jsp");
         dispatcher.forward(request, response);
     }
 

@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <!doctype html>
 <html lang="en">
 
@@ -87,10 +88,13 @@
                                                     <span class="badgeComingSoon badge badge-pill badge-warning">Coming
                                                         soon</span>
                                                 </button>
-                                                <button type="button" tabindex="0" class="dropdown-item">Actions</button>
+                                                <button type="button" tabindex="0" class="dropdown-item">Actions
+                                                    <span class="badgeComingSoon badge badge-pill badge-warning">Coming
+                                                        soon</span>
+                                                </button>
                                                 <div tabindex="-1" class="dropdown-divider"></div>
                                                 <button type="button" tabindex="0" class="dropdown-item">
-                                                    <a href="login.jsp">Log Out</a>
+                                                    <a href="signout">Log Out</a>
                                                 </button>
                                             </div>
                                         </div>
@@ -155,13 +159,13 @@
                             <ul class="vertical-nav-menu">
                                 <li class="app-sidebar__heading">Dashboards</li>
                                 <li>
-                                    <a href="home.jsp" class="mm-active">
+                                    <a href="manager" class="mm-active">
                                         <i class="metismenu-icon pe-7s-rocket">
                                         </i>Customers Manager
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="newaccount.jsp">
+                                    <a href="NewAccount">
                                         <i class="metismenu-icon pe-7s-plus">
                                         </i>New Account
                                     </a>
@@ -209,63 +213,27 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="mytable">
-                                                        <tr>
-                                                            <td scope="row">1</td>
-                                                            <td class="text-center">@mdo</td>
-                                                            <td class="text-center">Mark</td>
-                                                            <td class="text-center">Otto@email.com</td>
-                                                            <td class="text-center">0912382491</td>
-                                                            <td class="text-center">ha noi</td>
-                                                            <td class="text-center">0xxx 0xxx 0xxx 0xxx</td>
-                                                            <td class="text-center">male</td>
-                                                            <td class="text-center">
-                                                                <div class="badge badge-warning">Reset pass</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button type="button" class="btn mr-2 mb-2 btn-primary"
-                                                                        data-toggle="modal" data-target="#dialogModal">
-                                                                    Details
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td scope="row">2</td>
-                                                            <td class="text-center">@2mdo</td>
-                                                            <td class="text-center">2Mark</td>
-                                                            <td class="text-center">2Otto@email.com</td>
-                                                            <td class="text-center">0322223411</td>
-                                                            <td class="text-center">nam dinh</td>
-                                                            <td class="text-center">2xxx 2xxx 2xxx 2xxx</td>
-                                                            <td class="text-center">female</td>
-                                                            <td class="text-center">
-                                                                <div class="badge badge-warning">Reset pass</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button type="button" class="btn mr-2 mb-2 btn-primary"
-                                                                        data-toggle="modal" data-target="#dialogModal">
-                                                                    Details
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td scope="row">3</td>
-                                                            <td class="text-center">@3mdo</td>
-                                                            <td class="text-center">3Mark</td>
-                                                            <td class="text-center">3Otto@idcs.com</td>
-                                                            <td class="text-center">0847283491</td>
-                                                            <td class="text-center">Ninh Binh</td>
-                                                            <td class="text-center">3xxx 3xxx 3xxx 3xxx</td>
-                                                            <td class="text-center">Male</td>
-                                                            <td class="text-center">
-                                                                <!-- <div class="badge badge-warning">Reset pass</div> -->
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <button type="button" class="btn mr-2 mb-2 btn-primary"
-                                                                        data-toggle="modal" data-target="#dialogModal">
-                                                                    Details
-                                                                </button>
-                                                            </td>
-                                                        </tr>
+                                                        <c:forEach items="${listUser}" var="i" varStatus="list">
+                                                            <tr>
+                                                                <td scope="row">${list.index + 1}</td>
+                                                                <td class="text-center">${i.userName}</td>
+                                                                <td class="text-center">${i.fullName}</td>
+                                                                <td class="text-center">${i.emailAddress}</td>
+                                                                <td class="text-center">${i.phoneNumber}</td>
+                                                                <td class="text-center">${i.address}</td>
+                                                                <td class="text-center">${i.expiryDate}</td>
+                                                                <td class="text-center">male</td>
+                                                                <td class="text-center">
+                                                                    <div class="badge badge-warning">Reset pass</div>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <button type="button" class="btn mr-2 mb-2 btn-primary"
+                                                                            data-toggle="modal" data-target="#dialogModal">
+                                                                        Details
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -298,6 +266,7 @@
         </div>
         <script type="text/javascript" src="../${pageContext.request.contextPath}/assets/scripts/main.js"></script>
         <script type="text/javascript" src="../${pageContext.request.contextPath}/assets/scripts/script.js"></script>
+
     </body>
 
 </html>
@@ -305,7 +274,7 @@
 <div class="modal fade" id="dialogModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="" method="POST">
+            <form action="manager" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalLabel">Infomation Detail</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -313,7 +282,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
+                    <div class="position-relative form-group"><label for="account" class="">Account</label>
+                        <input style="text-transform: uppercase;" name="accountDialog" id="account" type="text" class="form-control" disabled/>
+                    </div>
                     <div class="position-relative form-group"><label for="fullname" class="">Full Name</label>
                         <input name="fullnameDialog" id="fullname" placeholder="Full name" type="text" class="form-control"/>
                     </div>

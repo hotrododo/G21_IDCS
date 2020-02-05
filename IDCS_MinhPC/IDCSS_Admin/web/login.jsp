@@ -69,7 +69,7 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript" src="./assets/scripts/main.js"></script>
+    <script type="text/javascript" src="../${pageContext.request.contextPath}/assets/scripts/main.js"></script>
 </body>
 
 </html>
