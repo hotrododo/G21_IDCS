@@ -54,3 +54,8 @@ def tasks_to_dict(tasks):
 def host_to_dict(host):
     return {"ipv4":host[0], "ipv6":host[1], "dns":host[2], "net_name":host[3], "country":host[4], \
         "oraganization":host[5], "last_updated":host[6]}
+
+
+# convert verify_code to dict
+def verify_code_to_dict(verify_code):
+    return {"time_stamp":verify_code[0],"user_name":verify_code[1],"verify_code":verify_code[2]}

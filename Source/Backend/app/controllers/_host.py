@@ -20,13 +20,13 @@ class _host:
 # 
 
 def _get_by_ip(conn, host):
-    sql_string = "SELECT * FROM host_tbl h WHERE h.ipv4 = {0}".format(host["ipv4"])
+    sql_string = "SELECT * FROM host_tbl h WHERE h.ipv4 = '{0}'".format(host["ipv4"])
     data = _sql._get_an_item(conn, sql_string)
     return data
 
 
 def add_host_to_db(conn, host):
-    host_stamp = get_host_from_db(conn, host)
+    host_stamp = _get_by_ip(conn, host)
     if host_stamp is None:
             # sql_string = "INSERT INTO host_tbl(ipv4,ipv6,dns,net_name,country,oraganization,asn,last_updated)"
         sql_string = "INSERT INTO host_tbl({0},{1},{2},{3},{4},{5},{6}) \
@@ -55,9 +55,8 @@ def _delete_from_db(conn, host):
 # 
 def _scan_host(host):
     result = {}
-    hosts = host["ipv4"]
     arguments='-sn --script whois-ip'     #-sn no port scan
-    result = nm._scan(hosts, arguments)
+    result = _nm._scan(host, arguments)
     if result['nmap']['scanstats']['uphosts'] == '0':
         return None      #Return F when hots down
     return result

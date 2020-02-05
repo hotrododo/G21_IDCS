@@ -27,8 +27,7 @@ def _get_by_id(conn, port):
 # check port has exits on database
 # return port if has exits / None if not exits
 def _check_exits_on_db(host_ip, port_num):
-    sql_string = "SELECT * FROM port_tbl p WHERE p.port_num = {0} AND p.host_ip = {1}"
-    sql_string.format(host_ip, port_num)
+    sql_string = "SELECT * FROM port_tbl p WHERE p.port_num = {0} AND p.host_ip = {1}".format(host_ip, port_num)
     data = _sql._get_an_item(conn, sql_string)
     return data
 
@@ -51,8 +50,7 @@ def _add_to_db(conn, port):
 
 def _update_by_id(conn, port):
     sql_string = "UPDATE port_tbl SET port_num = {1}, host_ip = '{2}', service_name = '{3}', \
-        version = '{4}', status = {5}, cpe = '{6}' WHERE port_id = {0}"
-    sql_string.format(*port.values())
+        version = '{4}', status = {5}, cpe = '{6}' WHERE port_id = {0}".format(*port.values())
     result = _sql._excute_without_return(conn, sql_string)
     return result
 

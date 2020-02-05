@@ -92,6 +92,6 @@ def test_get_host(ip):
 # test_user_update()
 # test_get_list_users()
 # test_user_resgiter("thanhdn")
-# test_mail_send("thanhdn", "hotro.dodo@gmail.com")
-test_mail_verify("thanhdn", "hotro.dodo@gmail.com", "WDpdad")
+test_mail_send("thanhdn", "hotro.dodo@gmail.com")
+# test_mail_verify("thanhdn", "hotro.dodo@gmail.com", "WDpdad")
 # test_get_host("123.31.41.27")

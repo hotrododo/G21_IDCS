@@ -51,22 +51,9 @@ def _add(conn, user):
     return result
 
 
-def _get_verify_code(conn, user):
-    sql_string = "SELECT * FROM verify_tbl WHERE user_name = '{0}'".format(user["userName"])
-    result = _sql._get_an_item(conn, sql_string)
-    return result
-
 
 def _update_user_type(conn, user):
-    sql_string = "UPDATE user_tbl SET user_type = {0} WHERE user_name = {1}"
-    sql_string.format(user["userType"], user["userName"])
+    sql_string = "UPDATE user_tbl SET user_type = {0} WHERE user_name = '{1}'".format(user["userType"], user["userName"])
     result = _sql._excute_without_return(conn, sql_string)
     return result
-
-def _delete_verify_code(conn, user_name):
-    sql_string = "DELETE * FROM verify_tbl WHERE user_name = '{0}'"
-    sql_string.format(user_name)
-    result = _sql._excute_without_return(conn, sql_string)
-    return result
-
 

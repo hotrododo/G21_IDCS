@@ -3,6 +3,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from flaskext.mysql import MySQL
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
+import schedule
+import time
+import urllib.request
 import json, random, string
 import mail.mail_services as mail
 import controllers._user as _user
@@ -11,9 +14,11 @@ import controllers._task as _task
 import controllers._port as _port
 import os.path
 import controllers.vuln_scanner as _vs
-import controllers._port_vult as _pv
+import controllers._port_vuln as _pv
 import controllers._convert as _cv
-import controllers._vult as _vult
+import controllers._vuln as _vuln
+import controllers._verify_code as _vc
+import nmap_tools._extract_data as _ed
 
 
 app = Flask(__name__)
@@ -86,9 +91,16 @@ def get_list_users():
 @app.route("/idcs/user/send-email", methods = ['POST'])
 def send_email_code():
     data = request.json
-    code = genarate_random_code(6)
-    exp_time = datetime.now() + timedelta(hours=1)
-    return return_change_status(mail.send_access_code_to_mail(data, code,exp_time))
+    verify_code = _vc.get_code_by_user(conn, data["userName"])
+    verify = {}
+    if verify_code is None:
+        verify["verify_code"] = genarate_random_code(6)
+        verify["time_stamp"] = datetime.now() + timedelta(hours=1)
+        verify["user_name"] = data["userName"]
+        result = _vc._add_verify_code(conn, verify)
+    else:
+        verify = _cv.verify_code_to_dict(verify_code)
+    return return_change_status(mail.send_access_code_to_mail(data, verify["verify_code"],verify["time_stamp"]))
 
 
 # 
@@ -105,7 +117,7 @@ def user_register():
 @app.route("/idcs/email/verify", methods = ['POST'])
 def email_verify():
     user = request.json
-    verify = _user._get_verify_code(conn, user)
+    verify = _vc._get_verify_code(conn, user)
     if verify is not None:
         if user["verify_code"] == verify[2]:
             # update user type to #2 (FREE Account)
@@ -113,7 +125,7 @@ def email_verify():
             stt = _user._update_user_type(conn, user)
             if stt:
                 #  out of date verify code
-                _user._delete_verify_code(conn, user["userName"])
+                _vc._delete_verify_code(conn, user["userName"])
                 return return_change_status(stt)
     return return_change_status(False)
 
@@ -125,10 +137,10 @@ def email_verify():
 @app.route("/idcs/host/get", methods = ['POST'])
 def get_host_from_db():
     # get smt
-    host_stamp = request.json
-    host_db = _host._get_by_ip(conn, host_stamp)
+    data = request.json
+    host_db = _host._get_by_ip(conn, data)
     # if host haven't in db or host no longer update in 30 days
-    if not host or datetime(host["time_stamp"]) + timedelta(days = 30) < datetime.now:
+    if not host_db or datetime(host_db[6]) + timedelta(days = 30) < datetime.now:
         # check task has exits
         if not _task._get_from_db(conn, data):
             # create a task scan
@@ -143,14 +155,14 @@ def get_host_from_db():
     if ports_db is not None:
         ports = _cv.ports_to_dict(ports_db)
         for port in ports:
-            vults = _pv._get_by_id(conn, port["port_id"])
-            if vults is not None:
-                list_vult = {}
-                for v in vults:
-                    vult = _vult.get_by_num(conn, v[1])
-                    if vult is not None:
-                        list_vult[v[1]] = {"cve_num":v[1], "cve_desc":vult[1]}
-            port["vult"] = list_vult
+            vulns = _pv._get_by_id(conn, port["port_id"])
+            if vulns is not None:
+                list_vuln = {}
+                for v in vulns:
+                    vuln = _vuln.get_by_num(conn, v[1])
+                    if vuln is not None:
+                        list_vuln[v[1]] = {"cve_num":v[1], "cve_desc":vuln[1]}
+            port["vuln"] = list_vuln
     host["ports"] = ports
     return host
 
@@ -181,7 +193,7 @@ def return_change_status(b):
 def do_task(task):
     last_updated = datetime.now()
     # scan host with nmap
-    s_host = _host._scan_host(task[1])
+    s_host = _host._scan_host(task[0])
     if s_host is None or s_host["nmap"]["scanstats"]["uphosts"] == 0:
         return {"status":"host down or not public"}
     # extract host from nmap scan to dict
@@ -195,7 +207,7 @@ def do_task(task):
         else:
             print("cannot add host")
     else:
-        # update new host scan to db
+        # update new host-scan to db
         if _host._update_to_db(conn, host):
             print("host updated!")
         else:
@@ -213,45 +225,67 @@ def do_task(task):
             port["port_id"] = port_tmp[0]
             result = _port._update_by_id(conn, port)
         else:
+            # add port to db
             result = _port._add_to_db(conn, port)
         if result:
             print("updated port: {} of {}".format(port["port_num"], port["host_ip"]))
-        # get port in db
+        # reload port from db
         port = _port._check_exits_on_db(port)
-        if port["service_name"] == "ms-wbt-server":
-            vults = _vs.scan(port["host_ip"],port["port_num"],"windows","rdp")
-            if vults is not None:
-                for vult in vults:
-                    port_vult = [port["port_id"], vult, last_updated]
+        if port["service_name"] == "rdp":
+            # cpe data separation
+            l_cpe = port["cpe"].split(":")
+            vulns = _vs.scan(port["host_ip"],port["port_num"],l_cpe[len(l_cpe)],"rdp")
+            if vulns is not None:
+                for vuln in vulns:
+                    port_vuln = [port["port_id"], vuln, last_updated]
                     if _pv._get_by_id(conn, port["port_id"]) is not None:
-                        result = _pv._update_by_id(conn, port_vult)
+                        result = _pv._update_by_id(conn, port_vuln)
                     else:
-                        result = _pw._add_to_db(conn, port_vult)
+                        result = _pw._add_to_db(conn, port_vuln)
                     if result:
                         print("update completed")
 
+# download cve data file
+def downloadFile():
+    url = 'https://cve.mitre.org/data/downloads/allitems.csv'
+    file_name = "allitems.csv"
+    urllib.request.urlretrieve(url, file_name)
 
 
-
-
-
+@app.route("/idcs/task/excute", methods = ['POST'])
 def excute_task():
     # get list task does not excuted
     tasks = _task._get_list_new(conn)
     if tasks is None:
         return {"status":"no task to scan"}
+    if not any(isinstance(el, list) for el in tasks):
+        tasks = [tasks]
     with ThreadPoolExecutor(max_workers=5) as executor:
         future = {executor.submit(do_task, task) for task in tasks}
 
 
 def check_update():
-    
-    result = _vult._update_vult_from_file(conn, _config["cve_file"])
+    time_now = datetime.now()
+    date = time_now.date()
+    if date == 1:
+        # donwload cve file
+        downloadFile()
+        # update to db
+        result = _vuln._update_vuln_from_file(conn, _config["cve"]["cve_file"])
+
 #
 #  
 # 
 
 if __name__ == '__main__':
     app.run()
-    excute_task()
+
+# do update cve on first day of month at 1 a.m
+schedule.every().day.at("1:00").do(check_update)
+# check exp date each 5 minutes
+schedule.every(5).minutes.do(_vc.expiry_code, conn, (datetime.now() - timedelta(hours=1)))
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
 

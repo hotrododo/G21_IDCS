@@ -1,4 +1,5 @@
 import socket
+from datetime import datetime
 # 
 # NMAP DATA EXTRACT
 # 
@@ -22,7 +23,7 @@ def _result_to_host(result):
     return host
 
 def ipv6_check_from_(ipv4):
-    return socket.inet_pton(socket.AF_INET6, ipv4)
+    return socket.getaddrinfo(ipv4, 22, socket.AF_INET6)[0][4][0]
 
 
 def _result_to_ports(result):
