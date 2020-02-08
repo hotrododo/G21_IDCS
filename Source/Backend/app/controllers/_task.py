@@ -21,7 +21,7 @@ def _get_list_new(conn):
 
 
 def _add_to_db(conn, data):
-    sql_string = "INSERT INTO task_tbl(user_name, ipv4, status, time_stamp) \
+    sql_string = "INSERT INTO task_tbl(ipv4, user_name, status, time_stamp) \
         VALUE('{0}','{1}',{2},'{3}')".format(*data.values())
     result = _sql._excute_without_return(conn, sql_string)
     return result

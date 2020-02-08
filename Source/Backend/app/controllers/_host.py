@@ -38,7 +38,7 @@ def add_host_to_db(conn, host):
 # update host
 def _update_to_db(conn, host):
     sql_string = "UPDATE host_tbl SET ipv4 = '{0}', ipv6 = '{1}', dns = '{2}', net_name = '{3}', \
-        country = '{4}', oraganization = '{5}', asn = '{6}', last_updated = {7}".format(*host.values())
+        country = '{4}', oraganization = '{5}', last_updated = '{6}'".format(*host.values())
     result = _sql._excute_without_return(conn, sql_string)
     return result
 

@@ -1,3 +1,5 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import socket
 import database.mysql_excute as _sql
 import nmap_tools._nmap as _nm
 import nmap_tools._extract_data as _ed
@@ -26,8 +28,8 @@ def _get_by_id(conn, port):
 
 # check port has exits on database
 # return port if has exits / None if not exits
-def _check_exits_on_db(host_ip, port_num):
-    sql_string = "SELECT * FROM port_tbl p WHERE p.port_num = {0} AND p.host_ip = {1}".format(host_ip, port_num)
+def _check_exits_on_db(conn, host_ip, port_num):
+    sql_string = "SELECT * FROM port_tbl p WHERE p.port_num = {0} AND p.host_ip = '{1}'".format(port_num,host_ip)
     data = _sql._get_an_item(conn, sql_string)
     return data
 
@@ -72,8 +74,8 @@ def _is_open(ip,port):
 #Get ports open in range(port_min, port_max)
 def _get_open_ports(ip, port_min, port_max):
 	ports = []
-	with ThreadPoolExecutor(max_workers=50) as executor:
-		future = {executor.submit(_is_open,target,p)
+	with ThreadPoolExecutor(max_workers=100) as executor:
+		future = {executor.submit(_is_open,ip,p)
 					for p in range(port_min,port_max + 1)}
 		for f in as_completed(future):
 			try:
@@ -87,7 +89,7 @@ def _get_open_ports(ip, port_min, port_max):
 
 
 # scan port with nmap
-def _nmap_scan(ip, port_min = 0, port_max = 2000):
+def _nmap_scan(ip, port_min = 0, port_max = 4000):
     ports = _get_open_ports(ip, port_min, port_max)
     ports_list = ','.join(str(port) for port in ports)
     arguments='-sV -p ' + ports_list       #-sV scan service

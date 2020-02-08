@@ -213,12 +213,12 @@ def do_task(task):
         else:
             print("cannot update host")
     # scan port with nmap
-    s_ports = _port._nmap_scan(task[1])
-    if s_ports is None or s_ports["scan"][task[1]]["tcp"] is None:
+    s_ports = _port._nmap_scan(task[0])
+    if s_ports is None or s_ports["scan"][task[0]]["tcp"] is None:
         return {"status":"no port open"}
     ports = _ed._result_to_ports(s_ports)
-    for port in ports:
-        port_tmp = _port._check_exits_on_db(port)
+    for port in ports.values():
+        port_tmp = _port._check_exits_on_db(conn, task[0], port["port_num"])
         result = None
         if port_tmp is not None:
             # set port_id
