@@ -4,6 +4,7 @@ import importlib
 import os
 import re
 import sys
+import logging
 
 
 CDIR = os.path.dirname(os.path.realpath(__file__))
@@ -37,7 +38,7 @@ def load_plugins(platform, service):
                 modules.append(importlib.import_module(plugin, package=subdir))
         return modules
     except Exception as e:
-        print(e)
+        logging.error(e)
         pass
 
 

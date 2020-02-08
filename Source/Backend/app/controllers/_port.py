@@ -45,7 +45,7 @@ def _get_by_host(conn, host):
 
 def _add_to_db(conn, port):
     sql_string = "INSERT INTO port_tbl(port_num, host_ip, service_name, version, status, cpe) \
-            VALUES({0},'{1}','{2}','{3}',{4},'{5}')".format(*port)
+            VALUES({0},'{1}','{2}','{3}','{4}','{5}')".format(*port.values())
     result = _sql._excute_without_return(conn, sql_string)
     return result
 

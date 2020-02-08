@@ -1,0 +1,14 @@
+2020-02-09 02:47:31,477:	_internal.py:_log():122	 * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+2020-02-09 02:47:40,415:	idcs.py:do_task():227	host updated!
+2020-02-09 02:48:14,202:	app.py:log_exception():1890	Exception on /idcs/task/excute [POST]
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    return self.finalize_request(rv)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/flask/app.py", line 1967, in finalize_request
+    response = self.make_response(rv)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/flask/app.py", line 2096, in make_response
+    raise TypeError(
+TypeError: The view function did not return a valid response. The function either returned None or ended without a return statement.
+2020-02-09 02:48:14,214:	_internal.py:_log():122	127.0.0.1 - - [09/Feb/2020 02:48:14] "POST /idcs/task/excute HTTP/1.1" 500 -

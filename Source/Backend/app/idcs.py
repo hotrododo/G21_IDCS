@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 import schedule
 import time
+import logging
 import urllib.request
 import json, random, string
 import mail.mail_services as mail
@@ -21,6 +22,7 @@ import controllers._verify_code as _vc
 import nmap_tools._extract_data as _ed
 
 
+
 app = Flask(__name__)
 mysql = MySQL()
 #Read config file
@@ -29,7 +31,13 @@ path = os.path.join(my_path, "app.conf")
 with open(path) as json_data_file:
     _config = json.load(json_data_file)
 
-
+logging.basicConfig(level=logging.DEBUG, filename='log.txt', filemode='w', format=(
+    '%(asctime)s:\t'
+    '%(filename)s:'
+    '%(funcName)s():'
+    '%(lineno)d\t'
+    '%(message)s'
+))
 
 # MySQL configurations
 app.config['MYSQL_DATABASE_USER'] = _config["mysql"]["MYSQL_DATABASE_USER"]
@@ -48,11 +56,13 @@ conn = mysql.connect()
 @app.route("/idcs/user/verify", methods=['POST'])
 def verify_user():
     user_stamp = request.json
+    if user_stamp is None:
+        return 204  #no-content
     user_name = user_stamp["userName"]
     # user = _user._get_by_name(conn, user_name)
     if check_password_hash(user_stamp["password"], user_stamp[user_name]):
-        return jsonify(user)
-    return jsonify({"status":"failed"})
+        return jsonify(user), 202   #accepted
+    return jsonify({"status":"failed"}), 404    #not-found
 
 # update user info
 @app.route("/idcs/user/update/info", methods=['POST'])
@@ -72,7 +82,12 @@ def update_password():
 def add_an_user():
     user = request.json
     user["password"] = generate_password_hash(user["password"])
-    return return_change_status(_user._add(conn, user))
+    result = _user._add(conn, user)
+    if result is None:
+        return {"status":"account has taked"}, 303  #see-other
+    if result:
+        return return_change_status(result), 201    #created
+    return return_change_status(result), 409    #conflict
 
 # get list users from db
 @app.route("/idcs/user/list", methods = ['POST'])
@@ -203,15 +218,15 @@ def do_task(task):
     if host_stamp is None:
         # add new host scan to db
         if _host.add_host_to_db(conn, host):
-            print("host added!")
+            logging.info("host added!")
         else:
-            print("cannot add host")
+            logging.info("cannot add host")
     else:
         # update new host-scan to db
         if _host._update_to_db(conn, host):
-            print("host updated!")
+            logging.info("host updated!")
         else:
-            print("cannot update host")
+            logging.info("cannot update host")
     # scan port with nmap
     s_ports = _port._nmap_scan(task[0])
     if s_ports is None or s_ports["scan"][task[0]]["tcp"] is None:
@@ -228,9 +243,9 @@ def do_task(task):
             # add port to db
             result = _port._add_to_db(conn, port)
         if result:
-            print("updated port: {} of {}".format(port["port_num"], port["host_ip"]))
+            logging.info("updated port: {} of {}".format(port["port_num"], port["host_ip"]))
         # reload port from db
-        port = _port._check_exits_on_db(port)
+        port = _port._check_exits_on_db(conn, task[0], port["port_num"])
         if port["service_name"] == "rdp":
             # cpe data separation
             l_cpe = port["cpe"].split(":")
@@ -243,7 +258,7 @@ def do_task(task):
                     else:
                         result = _pw._add_to_db(conn, port_vuln)
                     if result:
-                        print("update completed")
+                        logging.info("update completed")
 
 # download cve data file
 def downloadFile():

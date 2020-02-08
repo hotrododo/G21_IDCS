@@ -3,6 +3,7 @@ from email.mime.text import MIMEText
 import smtplib
 from string import Template
 import os
+import logging
 
 #SMTP configurations
 MY_ADDRESS = 'noreply.idcs@gmail.com'
@@ -30,7 +31,7 @@ def send_access_code_to_mail(user, access_code, exp_date):
         del msg
         mail.quit()
     except Exception as ex:
-        print(str(ex.errors()))
+        logging.error(str(ex.errors()))
         return False
     return True
 
