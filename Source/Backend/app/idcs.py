@@ -62,7 +62,7 @@ def verify_user():
         return 204  #no-content
     user_name = user_stamp["userName"]
     user = _user._get_by_name(conn, user_name)
-    if check_password_hash(user_stamp["password"], user_stamp[user_name]):
+    if check_password_hash(user["password"], user_stamp["password"]):
         return jsonify(user), 202   #accepted
     return jsonify({"status":"failed"}), 404    #not-found
 

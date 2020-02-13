@@ -1,1 +1,2 @@
-2020-02-13 18:13:28,568:	_internal.py:_log():122	 * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+2020-02-13 18:37:05,599:	_internal.py:_log():122	 * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+2020-02-13 18:39:27,769:	_internal.py:_log():122	127.0.0.1 - - [13/Feb/2020 18:39:27] "POST /idcs/user/verify HTTP/1.1" 202 -
