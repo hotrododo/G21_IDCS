@@ -24,20 +24,20 @@ def _update_info(conn, user):
     user_temp = _get_by_name(conn, user["userName"])
     if user_temp is not None:
         #genarate sql string
-        sql_string = "UPDATE user_tbl u SET u.full_name = '{0}', u.gender = {1}, u.email = '{2}', \
-            u.phone = '{3}', u.address = '{4}', u.credits = {5}, \
-            u.user_type = {6} WHERE u.user_name = '{7}'".format(user["fullName"], user["gender"], \
+        sql_string = "UPDATE user_tbl u SET u.full_name = %s, u.gender = %s, u.email = %s, \
+            u.phone = %s, u.address = %s, u.credits = %s \
+            u.user_type = %s WHERE u.user_name = %s"
+        result = _sql._excute_without_return(conn, sql_string, tuple(user["fullName"], user["gender"], \
             user["emailAddress"], user["phoneNumber"], user["address"], \
-            user["credits"], user["userType"], user["userName"])
-        result = _sql._excute_without_return(conn, sql_string)
+            user["credits"], user["userType"], user["userName"]))
         return result
     return None
 
 def _update_password(conn, user_name, password):
     user_temp = _get_by_name(conn, user_name)
     if not user_temp: 
-        sql_string = "UPDATE user_tbl u SET u.password = {0} WHERE u.user_name = {1}".format(password, user_name)
-        result = _sql._excute_without_return(conn, sql_string)
+        sql_string = "UPDATE user_tbl u SET u.password = %s WHERE u.user_name = %s"
+        result = _sql._excute_without_return(conn, sql_string, tuple(password, user_name))
         return result
     return None
         
@@ -47,15 +47,14 @@ def _add(conn, user):
     if user_temp is None:  
         sql_string = "INSERT INTO user_tbl(user_name, password, full_name, gender, email, \
             phone, address, credits, user_type) \
-            VALUES('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},{8})".format(*_convert.user_dict_to_list(user))
-        result = _sql._excute_without_return(conn, sql_string)
+            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        result = _sql._excute_without_return(conn, sql_string, tuple(*_convert.user_dict_to_list(user)))
         return result
     return None
 
 
 
 def _update_user_type(conn, user):
-    sql_string = "UPDATE user_tbl SET user_type = {0} WHERE user_name = '{1}'".format(user["userType"], user["userName"])
-    result = _sql._excute_without_return(conn, sql_string)
+    sql_string = "UPDATE user_tbl SET user_type = %s WHERE user_name = %s"
+    result = _sql._excute_without_return(conn, sql_string, tuple(user["userType"], user["userName"]))
     return result
-

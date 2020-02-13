@@ -1,28 +1,31 @@
-from flask import Flask, request, jsonify
+import json
+import logging
+import os.path
+import random
+import string
+import time
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timedelta
+
+import psutil
+import schedule
+from flask import Flask, jsonify, request
 from flaskext.mysql import MySQL
 from werkzeug.security import check_password_hash, generate_password_hash
-from datetime import datetime, timedelta
-import schedule
-import time
-import logging
-import psutil
-import urllib.request
-import json, random, string
-import mail.mail_services as mail
-import controllers._user as _user
-import controllers._host as _host
-import controllers._task as _task
-import controllers._port as _port
-import os.path
-import controllers.vuln_scanner as _vs
-import controllers._port_vuln as _pv
+
 import controllers._convert as _cv
-import controllers._vuln as _vuln
+import controllers._host as _host
+import controllers._port as _port
+import controllers._port_vuln as _pv
+import controllers._task as _task
+import controllers._user as _user
 import controllers._verify_code as _vc
+import controllers._vuln as _vuln
+import controllers.vuln_scanner as _vs
+import mail.mail_services as mail
 import nmap_tools._extract_data as _ed
 from utils.config_utils import get_base_config
-
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -70,14 +73,17 @@ def verify_user():
 @app.route("/idcs/user/update/info", methods=['POST'])
 def update_information():
     user = request.json
-    return return_change_status(_user._update_info(conn, user))
+    result = _user._update_info(conn, user)
+    if result:
+        return return_change_status(True), 202
+    return return_change_status(False), 403
 
 # update user password
 @app.route("/idcs/user/update/password", methods = ['POST'])
 def update_password():
     user = request.json
     user["password"] = generate_password_hash(user["password"])
-    return return_change_status(update_user_password(conn, user["userName"], user["password"]))
+    return return_change_status(_user._update_password(conn, user["userName"], user["password"]))
 
 # add an user to db
 @app.route("/idcs/user/add", methods = ['POST'])
@@ -349,4 +355,3 @@ schedule.every(5).minutes.do(_vc.expiry_code, conn, (datetime.now() - timedelta(
 while True:
     schedule.run_pending()
     time.sleep(1)
-
