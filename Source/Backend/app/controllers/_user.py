@@ -7,8 +7,8 @@ class _user:
 
 #get an user
 def _get_by_name(conn, user_name):
-    sql_string = ("SELECT * FROM user_tbl WHERE user_name = '{0}'".format(user_name))
-    data = _sql._get_an_item(conn, sql_string)
+    sql_string = """SELECT * FROM user_tbl WHERE user_name = %s"""
+    data = _sql._get_an_item(conn, sql_string, tuple(user_name))
     if data is None:
         return None
     return _convert.user_list_to_dict(data)

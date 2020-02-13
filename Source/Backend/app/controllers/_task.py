@@ -33,8 +33,8 @@ def _get_by_user_name(conn, data):
     return result
 
 
-def _update_status(data):
-    sql_string = "UPDATE task_tbl SET status = {0} WHERE user_name = '{1}' AND ipv4 = '{2}'".format(data["status"], data["user_name"], data["ipv4"])
+def _update_status(conn, data):
+    sql_string = "UPDATE task_tbl SET status = {0} WHERE user_name = '{1}' AND ipv4 = '{2}'".format(data[2], data[0], data[1])
     result = _sql._excute_without_return(conn, sql_string)
     return result
             

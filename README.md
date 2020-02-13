@@ -21,3 +21,6 @@ pip3 install schedule
 Flask-MySQL:
 pip3 install flask-mysql
 
+PsUtil:
+pip3 install psutil
+

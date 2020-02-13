@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import schedule
 import time
 import logging
+import psutil
 import urllib.request
 import json, random, string
 import mail.mail_services as mail
@@ -20,17 +21,16 @@ import controllers._convert as _cv
 import controllers._vuln as _vuln
 import controllers._verify_code as _vc
 import nmap_tools._extract_data as _ed
-
+from utils.config_utils import get_base_config
 
 
 app = Flask(__name__)
 mysql = MySQL()
 #Read config file
-my_path = os.path.abspath(os.path.dirname(__file__))
-path = os.path.join(my_path, "app.conf")
-with open(path) as json_data_file:
-    _config = json.load(json_data_file)
 
+_config = get_base_config()
+
+# logging config
 logging.basicConfig(level=logging.DEBUG, filename='log.txt', filemode='w', format=(
     '%(asctime)s:\t'
     '%(filename)s:'
@@ -39,12 +39,14 @@ logging.basicConfig(level=logging.DEBUG, filename='log.txt', filemode='w', forma
     '%(message)s'
 ))
 
+MAX_WORKER = _config.workers
+
 # MySQL configurations
-app.config['MYSQL_DATABASE_USER'] = _config["mysql"]["MYSQL_DATABASE_USER"]
-app.config['MYSQL_DATABASE_PASSWORD'] = _config["mysql"]["MYSQL_DATABASE_PASSWORD"]
-app.config['MYSQL_DATABASE_DB'] = _config["mysql"]["MYSQL_DATABASE_DB"]
-app.config['MYSQL_DATABASE_HOST'] = _config["mysql"]["MYSQL_DATABASE_HOST"]
-app.config['MYSQL_DATABASE_PORT'] = _config["mysql"]["MYSQL_DATABASE_PORT"]
+app.config['MYSQL_DATABASE_USER'] = _config.db_user
+app.config['MYSQL_DATABASE_PASSWORD'] = _config.db_password
+app.config['MYSQL_DATABASE_DB'] = _config.db_name
+app.config['MYSQL_DATABASE_HOST'] = _config.db_host
+app.config['MYSQL_DATABASE_PORT'] = _config.db_port
 mysql.init_app(app)
 conn = mysql.connect()
 
@@ -59,7 +61,7 @@ def verify_user():
     if user_stamp is None:
         return 204  #no-content
     user_name = user_stamp["userName"]
-    # user = _user._get_by_name(conn, user_name)
+    user = _user._get_by_name(conn, user_name)
     if check_password_hash(user_stamp["password"], user_stamp[user_name]):
         return jsonify(user), 202   #accepted
     return jsonify({"status":"failed"}), 404    #not-found
@@ -250,15 +252,57 @@ def do_task(task):
             # cpe data separation
             l_cpe = port["cpe"].split(":")
             vulns = _vs.scan(port["host_ip"],port["port_num"],l_cpe[len(l_cpe)],"rdp")
+            # get exits vuln by port
+            exits_vulns = _pv._get_by_port(conn, port["port_id"])
+            if exits_vulns is not None:
+                if not any(isinstance(el, list) for el in exits_vulns):
+                    exits_vulns = [exits_vulns]
             if vulns is not None:
-                for vuln in vulns:
-                    port_vuln = [port["port_id"], vuln, last_updated]
-                    if _pv._get_by_id(conn, port["port_id"]) is not None:
-                        result = _pv._update_by_id(conn, port_vuln)
-                    else:
-                        result = _pw._add_to_db(conn, port_vuln)
-                    if result:
-                        logging.info("update completed")
+                # check lists contain list
+                if not any(isinstance(el, list) for el in vulns):
+                    vulns = [vulns]
+                # if list_exits vuln none then add all of vuln to db
+                if exits_vulns is None:
+                    for vuln in vulns:
+                        port_vuln = [port["port_id"], vuln, last_updated]
+                        result = _pv._add_to_db(conn, port_vuln)
+                        if result:
+                            logging.info("Port {0} has vuln: {1}".format(port_vuln[0], port_vuln[1]))
+                        else:
+                            logging.warning("Cannot add vuln {0} to port {1}".format(port_vuln[1], port_vuln[0]))
+                else:
+                    for ev in exits_vulns:
+                        # remove vuln if not still exits.
+                        if ev[1] not in vulns:
+                            result = _pv._remove_row(conn, ev)
+                            if result: logging.info("Remove vuln {0} in port {1}".format(ev[1], ev[0]))
+                            else: logging.info("Cannot remove vuln {0} in port {1}".format(ev[1], ev[0]))
+                        # update if can scan in target
+                        else:
+                            ev[2] = last_updated
+                            if _pv._update_by_id(conn, ev):
+                                logging.info("Update vuln {0} in port {1}".format(ev[1], ev[0]))
+                                # remove updated item
+                                vulns.remove(ev[1])
+                    if vulns is not None:
+                        if not any(isinstance(el, list) for el in vulns):
+                            vulns = [vulns]
+                        # query each vuln
+                        for vuln in vulns:
+                            port_vuln = [port["port_id"], vuln, last_updated]
+                            result = _pv._add_to_db(conn, port_vuln)
+                            if result:
+                                logging.info("Add vuln {0} in port {1}".format(port_vuln[1], port_vuln[0]))
+            else:   
+                # if cannot scan vuln in port then clear all port_vuln in db
+                if exits_vulns is not None:
+                    for ev in exits_vulns:
+                        result = _pv._remove_row(conn, ev)
+                        if result: logging.info("Remove vuln {0} in port {1}".format(ev[1], ev[0]))
+                        else: logging.info("Cannot remove vuln {0} in port {1}".format(ev[1], ev[0]))
+        # update task status to 1: host scan and updated to db
+        task[2] = 1
+        result = _task._update_status(conn, task)
 
 # download cve data file
 def downloadFile():
@@ -269,14 +313,15 @@ def downloadFile():
 
 @app.route("/idcs/task/excute", methods = ['POST'])
 def excute_task():
-    # get list task does not excuted
-    tasks = _task._get_list_new(conn)
-    if tasks is None:
-        return {"status":"no task to scan"}
-    if not any(isinstance(el, list) for el in tasks):
-        tasks = [tasks]
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        future = {executor.submit(do_task, task) for task in tasks}
+    if psutil.cpu_percent(1) < 70:
+        # get list task does not excuted
+        tasks = _task._get_list_new(conn)
+        if tasks is None:
+            return {"status":"no task to scan"}
+        if not any(isinstance(el, list) for el in tasks):
+            tasks = [tasks]
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            future = {executor.submit(do_task, task) for task in tasks}
 
 
 def check_update():
@@ -299,6 +344,7 @@ if __name__ == '__main__':
 schedule.every().day.at("1:00").do(check_update)
 # check exp date each 5 minutes
 schedule.every(5).minutes.do(_vc.expiry_code, conn, (datetime.now() - timedelta(hours=1)))
+# schedule.every(15).minutes.do(excute_task)
 
 while True:
     schedule.run_pending()
