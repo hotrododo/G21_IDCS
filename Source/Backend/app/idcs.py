@@ -337,7 +337,7 @@ def check_update():
         # donwload cve file
         downloadFile()
         # update to db
-        result = _vuln._update_vuln_from_file(conn, _config["cve"]["cve_file"])
+        result = _vuln._update_vuln_from_file(conn, _config.location)
 
 #
 #  
@@ -347,10 +347,10 @@ if __name__ == '__main__':
     app.run()
 
 # do update cve on first day of month at 1 a.m
-schedule.every().day.at("1:00").do(check_update)
+schedule.every().day.at("01:00").do(check_update)
 # check exp date each 5 minutes
 schedule.every(5).minutes.do(_vc.expiry_code, conn, (datetime.now() - timedelta(hours=1)))
-# schedule.every(15).minutes.do(excute_task)
+schedule.every(15).minutes.do(excute_task)
 
 while True:
     schedule.run_pending()

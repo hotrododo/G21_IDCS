@@ -22,15 +22,15 @@ class _port:
 # GET PORT BY ID
 # INPUT: port {"port_id":"<port_id>"}
 def _get_by_id(conn, port):
-    sql_string = "SELECT * FROM port_tbl p WHERE p.port_id = {0}".format(port["port_id"])
-    data = _sql._get_an_item(conn, sql_string)
+    sql_string = "SELECT * FROM port_tbl p WHERE p.port_id = %s"
+    data = _sql._get_an_item(conn, sql_string, tuple([port["port_id"]]))
     return data
 
 # check port has exits on database
 # return port if has exits / None if not exits
 def _check_exits_on_db(conn, host_ip, port_num):
-    sql_string = "SELECT * FROM port_tbl p WHERE p.port_num = {0} AND p.host_ip = '{1}'".format(port_num,host_ip)
-    data = _sql._get_an_item(conn, sql_string)
+    sql_string = "SELECT * FROM port_tbl p WHERE p.port_num = %s AND p.host_ip = %s"
+    data = _sql._get_an_item(conn, sql_string, tuple(port_num,host_ip))
     return data
 
 
@@ -38,22 +38,22 @@ def _check_exits_on_db(conn, host_ip, port_num):
 # GET ALL PORTS ON HOST BY IPv4
 # INPUT: host {"ipv4":"<host_ip>"}
 def _get_by_host(conn, host):
-    sql_string = "SELECT * FROM port_tbl p WHERE p.host_ip = '{0}'".format(host["host_ip"])
-    list_port = _sql._get_list_items(conn, sql_string)
+    sql_string = "SELECT * FROM port_tbl p WHERE p.host_ip = %s"
+    list_port = _sql._get_list_items(conn, sql_string, tuple([host["host_ip"]]))
     return list_port
 
 
 def _add_to_db(conn, port):
     sql_string = "INSERT INTO port_tbl(port_num, host_ip, service_name, version, status, cpe) \
-            VALUES({0},'{1}','{2}','{3}','{4}','{5}')".format(*port.values())
-    result = _sql._excute_without_return(conn, sql_string)
+            VALUES(%s,%s,%s,%s,%s,%s)"
+    result = _sql._excute_without_return(conn, sql_string, tuple(*port.values()))
     return result
 
 
 def _update_by_id(conn, port):
-    sql_string = "UPDATE port_tbl SET port_num = {1}, host_ip = '{2}', service_name = '{3}', \
-        version = '{4}', status = {5}, cpe = '{6}' WHERE port_id = {0}".format(*port.values())
-    result = _sql._excute_without_return(conn, sql_string)
+    sql_string = "UPDATE port_tbl SET port_num = %s, host_ip = %s, service_name = %s, \
+        version = %s, status = %s, cpe = %s WHERE port_id = %s"
+    result = _sql._excute_without_return(conn, sql_string, tuple(*port.values()))
     return result
 
 # 

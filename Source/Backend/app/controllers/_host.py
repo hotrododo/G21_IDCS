@@ -29,23 +29,23 @@ def add_host_to_db(conn, host):
     host_stamp = _get_by_ip(conn, host)
     if host_stamp is None:
             # sql_string = "INSERT INTO host_tbl(ipv4,ipv6,dns,net_name,country,oraganization,asn,last_updated)"
-        sql_string = "INSERT INTO host_tbl({0},{1},{2},{3},{4},{5},{6}) \
-            VALUE('{7}','{8}','{9}','{10}','{11}','{12}','{13}')".format(*host, *host.values())
-    result = _sql._excute_without_return(conn, sql_string)
+        sql_string = "INSERT INTO host_tbl(%s,%s,%s,%s,%s,%s,%s) \
+            VALUE(%s,%s,%s,%s,%s,%s,%s)"
+    result = _sql._excute_without_return(conn, sql_string, tuple(*host, *host.values()))
     return result
 
 
 # update host
 def _update_to_db(conn, host):
-    sql_string = "UPDATE host_tbl SET ipv4 = '{0}', ipv6 = '{1}', dns = '{2}', net_name = '{3}', \
-        country = '{4}', oraganization = '{5}', last_updated = '{6}'".format(*host.values())
-    result = _sql._excute_without_return(conn, sql_string)
+    sql_string = "UPDATE host_tbl SET ipv4 = %s, ipv6 = %s, dns = %s, net_name = %s, \
+        country = %s, oraganization = %s, last_updated = %s"
+    result = _sql._excute_without_return(conn, sql_string, tuple(*host.values()))
     return result
 
 
 def _delete_from_db(conn, host):
-    sql_string = "DELETE * FROM host_tbl WHERE ipv4 = '{}'".format(host["ipv4"])
-    result = _sql._excute_without_return(conn, sql_string)
+    sql_string = "DELETE * FROM host_tbl WHERE ipv4 = %s"
+    result = _sql._excute_without_return(conn, sql_string, tuple([host["ipv4"]]))
     return result
 
 
