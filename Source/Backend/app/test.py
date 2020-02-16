@@ -95,7 +95,13 @@ def test_get_host(ip):
 # test_mail_send("thanhdn", "hotro.dodo@gmail.com")
 # test_mail_verify("thanhdn", "hotro.dodo@gmail.com", "WDpdad")
 # test_get_host("123.31.41.27")
-import psutil
-# gives a single float value
-print("CPU: " + str(psutil.cpu_percent(1)))
-# print("RAM: " + str(psutil.virtual_memory()))
+# import psutil
+# # gives a single float value
+# print("CPU: " + str(psutil.cpu_percent(1)))
+# # print("RAM: " + str(psutil.virtual_memory()))
+# from datetime import datetime, timedelta
+# ss = datetime(2020, 2, 9, 2, 47, 40)
+# print((ss + timedelta(days = 30)) < datetime.now())
+a = ['123.31.41.27', 'thanhdn', 0]
+a[2] = 1
+print(a)

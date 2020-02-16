@@ -8,7 +8,7 @@ def _delete_verify_code(conn, user_name):
 def _add_verify_code(conn, verify):
     sql_string = "INSERT INTO verify_tbl(time_stamp, user_name, verify_code) \
         VALUES(%s, %s, %s)"
-    result = _sql._excute_without_return(conn, sql_string, tuple(verify["time_stamp"], verify["user_name"], verify["verify_code"]))
+    result = _sql._excute_without_return(conn, sql_string, tuple([verify["time_stamp"], verify["user_name"], verify["verify_code"]]))
     return result
 
 def get_code_by_user(conn, user_name):

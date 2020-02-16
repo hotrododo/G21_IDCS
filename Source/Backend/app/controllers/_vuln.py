@@ -29,13 +29,13 @@ def get_by_status(conn, cve_status):
 def _add_to_db(conn, vuln):
     sql_string = "INSERT INTO vuln_tbl(cve_num, cve_desc, last_updated) \
             VALUES(%s,%s,%s)"
-    result = _sql._excute_without_return(conn, sql_string, tuple(*vuln))
+    result = _sql._excute_without_return(conn, sql_string, tuple([*vuln]))
     return result
 
 # UPDATE
 def _update_by_id(conn, vuln):
     sql_string = "UPDATE vuln_tbl SET cve_desc = %s, last_updated = %s WHERE cve_num = %s"
-    result = _sql._excute_without_return(conn, sql_string, tuple(*vuln))
+    result = _sql._excute_without_return(conn, sql_string, tuple([*vuln]))
     return result
 
 # Read file and update to database

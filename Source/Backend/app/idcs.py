@@ -163,7 +163,7 @@ def get_host_from_db():
     data = request.json
     host_db = _host._get_by_ip(conn, data)
     # if host haven't in db or host no longer update in 30 days
-    if not host_db or datetime(host_db[6]) + timedelta(days = 30) < datetime.now:
+    if not host_db or (host_db[6] + timedelta(days = 30)) < datetime.now():
         # check task has exits
         if not _task._get_from_db(conn, data):
             # create a task scan
@@ -174,11 +174,11 @@ def get_host_from_db():
                 return jsonify({"status":"task created"})
         return jsonify({"status":"task processing"})
     host = _cv.host_to_dict(host_db)
-    ports_db = _port._get_by_host(host)
+    ports_db = _port._get_by_host(conn, host["ipv4"])
     if ports_db is not None:
         ports = _cv.ports_to_dict(ports_db)
-        for port in ports:
-            vulns = _pv._get_by_id(conn, port["port_id"])
+        for port in ports.values():
+            vulns = _pv._get_by_port(conn, port["port_id"])
             if vulns is not None:
                 list_vuln = {}
                 for v in vulns:
@@ -216,7 +216,9 @@ def return_change_status(b):
 def do_task(task):
     last_updated = datetime.now()
     # scan host with nmap
-    s_host = _host._scan_host(task[0])
+    # s_host = _host._scan_host(task[0])
+    s_host = {'nmap': {'command_line': 'nmap -oX - -sn --script whois-ip 123.31.41.27', 'scaninfo': {}, 'scanstats': {'timestr': 'Mon Feb 17 01:30:33 2020', 'elapsed': '1.39', 'uphosts': '1', 'downhosts': '0', 'totalhosts': '1'}}, 'scan': {'123.31.41.27': {'hostnames': [{'name': 'static.vnpt.vn', 'type': 'PTR'}], 'addresses': {'ipv4': '123.31.41.27'}, 'vendor': {}, 'status': {'state': 'up', 'reason': 'syn-ack'}, 'hostscript': [{'id': 'whois-ip', 'output': 'Record found at whois.apnic.net\ninetnum: 123.16.0.0 - 123.31.255.255\nnetname: VNPT-VN\ndescr: Vietnam Posts and Telecommunications Group\ncountry: VN\nperson: Pham Tien Huy\nemail: huypt@vnpt.vn'}]}}}
+    logging.debug(s_host)
     if s_host is None or s_host["nmap"]["scanstats"]["uphosts"] == 0:
         return {"status":"host down or not public"}
     # extract host from nmap scan to dict
@@ -236,7 +238,9 @@ def do_task(task):
         else:
             logging.info("cannot update host")
     # scan port with nmap
-    s_ports = _port._nmap_scan(task[0])
+    # s_ports = _port._nmap_scan(task[0])
+    s_ports = {'nmap': {'command_line': 'nmap -oX - -sV -p 80,443,3389 123.31.41.27', 'scaninfo': {'tcp': {'method': 'connect', 'services': '80,443,3389'}}, 'scanstats': {'timestr': 'Mon Feb 17 01:31:07 2020', 'elapsed': '13.03', 'uphosts': '1', 'downhosts': '0', 'totalhosts': '1'}}, 'scan': {'123.31.41.27': {'hostnames': [{'name': 'static.vnpt.vn', 'type': 'PTR'}], 'addresses': {'ipv4': '123.31.41.27'}, 'vendor': {}, 'status': {'state': 'up', 'reason': 'syn-ack'}, 'tcp': {80: {'state': 'open', 'reason': 'syn-ack', 'name': 'http', 'product': 'Microsoft IIS httpd', 'version': '7.5', 'extrainfo': '', 'conf': '10', 'cpe': 'cpe:/o:microsoft:windows'}, 443: {'state': 'open', 'reason': 'syn-ack', 'name': 'http', 'product': 'Microsoft IIS httpd', 'version': '7.5', 'extrainfo': '', 'conf': '10', 'cpe': 'cpe:/o:microsoft:windows'}, 3389: {'state': 'open', 'reason': 'syn-ack', 'name': 'rdp', 'product': 'Microsoft Terminal Services', 'version': '', 'extrainfo': '', 'conf': '10', 'cpe': 'cpe:/o:microsoft:windows'}}}}}
+    logging.debug(s_ports)
     if s_ports is None or s_ports["scan"][task[0]]["tcp"] is None:
         return {"status":"no port open"}
     ports = _ed._result_to_ports(s_ports)
@@ -254,19 +258,16 @@ def do_task(task):
             logging.info("updated port: {} of {}".format(port["port_num"], port["host_ip"]))
         # reload port from db
         port = _port._check_exits_on_db(conn, task[0], port["port_num"])
+        port = _cv.port_to_dict(port)
         if port["service_name"] == "rdp":
             # cpe data separation
             l_cpe = port["cpe"].split(":")
-            vulns = _vs.scan(port["host_ip"],port["port_num"],l_cpe[len(l_cpe)],"rdp")
+            vulns = _vs.scan(port["host_ip"],port["port_num"],l_cpe[len(l_cpe)-1],"rdp")
             # get exits vuln by port
             exits_vulns = _pv._get_by_port(conn, port["port_id"])
-            if exits_vulns is not None:
-                if not any(isinstance(el, list) for el in exits_vulns):
-                    exits_vulns = [exits_vulns]
+            # if exits_vulns is not None:
             if vulns is not None:
                 # check lists contain list
-                if not any(isinstance(el, list) for el in vulns):
-                    vulns = [vulns]
                 # if list_exits vuln none then add all of vuln to db
                 if exits_vulns is None:
                     for vuln in vulns:
@@ -278,6 +279,8 @@ def do_task(task):
                             logging.warning("Cannot add vuln {0} to port {1}".format(port_vuln[1], port_vuln[0]))
                 else:
                     for ev in exits_vulns:
+                        # convert ev tuple to list
+                        ev = list(ev)
                         # remove vuln if not still exits.
                         if ev[1] not in vulns:
                             result = _pv._remove_row(conn, ev)
@@ -290,9 +293,7 @@ def do_task(task):
                                 logging.info("Update vuln {0} in port {1}".format(ev[1], ev[0]))
                                 # remove updated item
                                 vulns.remove(ev[1])
-                    if vulns is not None:
-                        if not any(isinstance(el, list) for el in vulns):
-                            vulns = [vulns]
+                    if vulns is not None and len(vulns) > 0:
                         # query each vuln
                         for vuln in vulns:
                             port_vuln = [port["port_id"], vuln, last_updated]
@@ -307,8 +308,12 @@ def do_task(task):
                         if result: logging.info("Remove vuln {0} in port {1}".format(ev[1], ev[0]))
                         else: logging.info("Cannot remove vuln {0} in port {1}".format(ev[1], ev[0]))
         # update task status to 1: host scan and updated to db
-        task[2] = 1
-        result = _task._update_status(conn, task)
+    task = list(task)
+    task[2] = 1
+    result = _task._update_status(conn, task)
+    if result:
+        logging.info("Task {} completed".format(task[0]))
+
 
 # download cve data file
 def downloadFile():
@@ -323,7 +328,7 @@ def excute_task():
         # get list task does not excuted
         tasks = _task._get_list_new(conn)
         if tasks is None:
-            return {"status":"no task to scan"}
+            logging.info("No task to excute")
         if not any(isinstance(el, list) for el in tasks):
             tasks = [tasks]
         with ThreadPoolExecutor(max_workers=5) as executor:
@@ -334,8 +339,6 @@ def check_update():
     time_now = datetime.now()
     date = time_now.date()
     if date == 1:
-        # donwload cve file
-        downloadFile()
         # update to db
         result = _vuln._update_vuln_from_file(conn, _config.location)
 

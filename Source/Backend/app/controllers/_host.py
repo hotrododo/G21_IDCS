@@ -20,8 +20,8 @@ class _host:
 # 
 
 def _get_by_ip(conn, host):
-    sql_string = "SELECT * FROM host_tbl h WHERE h.ipv4 = '{0}'".format(host["ipv4"])
-    data = _sql._get_an_item(conn, sql_string)
+    sql_string = "SELECT * FROM host_tbl h WHERE h.ipv4 = %s"
+    data = _sql._get_an_item(conn, sql_string, tuple([host["ipv4"]]))
     return data
 
 
@@ -31,7 +31,7 @@ def add_host_to_db(conn, host):
             # sql_string = "INSERT INTO host_tbl(ipv4,ipv6,dns,net_name,country,oraganization,asn,last_updated)"
         sql_string = "INSERT INTO host_tbl(%s,%s,%s,%s,%s,%s,%s) \
             VALUE(%s,%s,%s,%s,%s,%s,%s)"
-    result = _sql._excute_without_return(conn, sql_string, tuple(*host, *host.values()))
+    result = _sql._excute_without_return(conn, sql_string, tuple([*host, *host.values()]))
     return result
 
 
@@ -39,7 +39,7 @@ def add_host_to_db(conn, host):
 def _update_to_db(conn, host):
     sql_string = "UPDATE host_tbl SET ipv4 = %s, ipv6 = %s, dns = %s, net_name = %s, \
         country = %s, oraganization = %s, last_updated = %s"
-    result = _sql._excute_without_return(conn, sql_string, tuple(*host.values()))
+    result = _sql._excute_without_return(conn, sql_string, tuple([*host.values()]))
     return result
 
 
