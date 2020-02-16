@@ -171,7 +171,7 @@ def get_host_from_db():
             data["time_stamp"] = datetime.now()     #set time stamp
             # add new task to db
             if _task._add_to_db(conn, data):   
-                return jsonify({"status":"task created"})
+                return jsonify({"status":"task created"}), 201
         return jsonify({"status":"task processing"})
     host = _cv.host_to_dict(host_db)
     ports_db = _port._get_by_host(conn, host["ipv4"])
