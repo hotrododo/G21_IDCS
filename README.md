@@ -24,3 +24,9 @@ pip3 install flask-mysql
 PsUtil:
 pip3 install psutil
 
+Libraries:
+gson-2.8.5.jar
+commons-io-2.6.jar
+httpclient-4.5.11.jar
+httpcore-4.4.13.jar
+jstl-1.2.jar
