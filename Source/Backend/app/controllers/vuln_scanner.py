@@ -11,15 +11,13 @@ CDIR = os.path.dirname(os.path.realpath(__file__))
 ROOTDIR = os.path.abspath(os.path.join(CDIR, os.pardir))
 
 
-def load_plugins(platform, service):
+def load_plugins(service):
     """Load all modules in the 'plugins' subdirectory.
 
     Returns:
     - modules: (type: Module list) list of modules.
     """
     subdir = "plugins"
-    if platform:
-        subdir = subdir + "/" + platform
     if service:
         subdir = subdir + "/" + service
     try:
@@ -43,9 +41,9 @@ def load_plugins(platform, service):
 
 
 
-def scan(ip, port, platform, service):
+def scan(ip, port, service):
     vulns = []
-    plugins = load_plugins(platform, service)
+    plugins = load_plugins(service)
     for plugin in plugins:
         res = plugin.check(ip, port)
         if res:

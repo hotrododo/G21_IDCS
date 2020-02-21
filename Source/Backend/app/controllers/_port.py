@@ -61,38 +61,39 @@ def _update_by_id(conn, port):
 # 
 
 #Checking port open
-def _is_open(ip,port):
-	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	try:
-		s.settimeout(0.5)
-		s.connect((ip, int(port)))
-		s.shutdown(2)
-		return port
-	except:
-		return None
+# def _is_open(ip,port):
+# 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# 	try:
+# 		s.settimeout(0.5)
+# 		s.connect((ip, int(port)))
+# 		s.shutdown(2)
+# 		return port
+# 	except:
+# 		return None
 
 #Get ports open in range(port_min, port_max)
-def _get_open_ports(ip, port_min, port_max):
-	ports = []
-	with ThreadPoolExecutor(max_workers=100) as executor:
-		future = {executor.submit(_is_open,ip,p)
-					for p in range(port_min,port_max + 1)}
-		for f in as_completed(future):
-			try:
-				result = f.result()
-				if result is not None:
-					ports.append(result)
-					continue
-			except:
-				pass
-	return ports    #RETURN list of port open on range
+# def _get_open_ports(ip, port_min, port_max):
+# 	ports = []
+# 	with ThreadPoolExecutor(max_workers=100) as executor:
+# 		future = {executor.submit(_is_open,ip,p)
+# 					for p in range(port_min,port_max + 1)}
+# 		for f in as_completed(future):
+# 			try:
+# 				result = f.result()
+# 				if result is not None:
+# 					ports.append(result)
+# 					continue
+# 			except:
+# 				pass
+# 	return ports    #RETURN list of port open on range
 
 
 # scan port with nmap
-def _nmap_scan(ip, port_min = 0, port_max = 4000):
-    ports = _get_open_ports(ip, port_min, port_max)
-    ports_list = ','.join(str(port) for port in ports)
-    arguments='-sV -p ' + ports_list       #-sV scan service
+def _nmap_scan(ip):
+    # ports = _get_open_ports(ip, port_min, port_max)
+    # ports_list = ','.join(str(port) for port in ports)
+    # arguments='-sV -p ' + ports_list       #-sV scan service
+    arguments = "-Pn -n -O -sC -sV -p- --min-parallelism 10"
     result = _nm._scan(ip, arguments)
     return result
 

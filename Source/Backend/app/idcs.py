@@ -179,15 +179,16 @@ def get_host_from_db():
         ports = _cv.ports_to_dict(ports_db)
         for port in ports.values():
             vulns = _pv._get_by_port(conn, port["port_id"])
+            list_vuln = {}
             if vulns is not None:
-                list_vuln = {}
                 for v in vulns:
                     vuln = _vuln.get_by_num(conn, v[1])
                     if vuln is not None:
-                        list_vuln[v[1]] = {"cve_num":v[1], "cve_desc":vuln[1]}
+                        list_vuln[v[1]] = {"cve_num":v[1],"cve_status":vuln[1], "cve_desc":vuln[2]}
             port["vuln"] = list_vuln
     host["ports"] = ports
-    return host
+    # logging.debug(host)
+    return host, 202
 
 
 @app.route("/idcs/task/get", methods = ['POST'])
@@ -216,8 +217,8 @@ def return_change_status(b):
 def do_task(task):
     last_updated = datetime.now()
     # scan host with nmap
-    # s_host = _host._scan_host(task[0])
-    s_host = {'nmap': {'command_line': 'nmap -oX - -sn --script whois-ip 123.31.41.27', 'scaninfo': {}, 'scanstats': {'timestr': 'Mon Feb 17 01:30:33 2020', 'elapsed': '1.39', 'uphosts': '1', 'downhosts': '0', 'totalhosts': '1'}}, 'scan': {'123.31.41.27': {'hostnames': [{'name': 'static.vnpt.vn', 'type': 'PTR'}], 'addresses': {'ipv4': '123.31.41.27'}, 'vendor': {}, 'status': {'state': 'up', 'reason': 'syn-ack'}, 'hostscript': [{'id': 'whois-ip', 'output': 'Record found at whois.apnic.net\ninetnum: 123.16.0.0 - 123.31.255.255\nnetname: VNPT-VN\ndescr: Vietnam Posts and Telecommunications Group\ncountry: VN\nperson: Pham Tien Huy\nemail: huypt@vnpt.vn'}]}}}
+    s_host = _host._scan_host(task[0])
+    # s_host = {'nmap': {'command_line': 'nmap -oX - -sn --script whois-ip 123.31.41.27', 'scaninfo': {}, 'scanstats': {'timestr': 'Mon Feb 17 01:30:33 2020', 'elapsed': '1.39', 'uphosts': '1', 'downhosts': '0', 'totalhosts': '1'}}, 'scan': {'123.31.41.27': {'hostnames': [{'name': 'static.vnpt.vn', 'type': 'PTR'}], 'addresses': {'ipv4': '123.31.41.27'}, 'vendor': {}, 'status': {'state': 'up', 'reason': 'syn-ack'}, 'hostscript': [{'id': 'whois-ip', 'output': 'Record found at whois.apnic.net\ninetnum: 123.16.0.0 - 123.31.255.255\nnetname: VNPT-VN\ndescr: Vietnam Posts and Telecommunications Group\ncountry: VN\nperson: Pham Tien Huy\nemail: huypt@vnpt.vn'}]}}}
     logging.debug(s_host)
     if s_host is None or s_host["nmap"]["scanstats"]["uphosts"] == 0:
         return {"status":"host down or not public"}
@@ -238,8 +239,8 @@ def do_task(task):
         else:
             logging.info("cannot update host")
     # scan port with nmap
-    # s_ports = _port._nmap_scan(task[0])
-    s_ports = {'nmap': {'command_line': 'nmap -oX - -sV -p 80,443,3389 123.31.41.27', 'scaninfo': {'tcp': {'method': 'connect', 'services': '80,443,3389'}}, 'scanstats': {'timestr': 'Mon Feb 17 01:31:07 2020', 'elapsed': '13.03', 'uphosts': '1', 'downhosts': '0', 'totalhosts': '1'}}, 'scan': {'123.31.41.27': {'hostnames': [{'name': 'static.vnpt.vn', 'type': 'PTR'}], 'addresses': {'ipv4': '123.31.41.27'}, 'vendor': {}, 'status': {'state': 'up', 'reason': 'syn-ack'}, 'tcp': {80: {'state': 'open', 'reason': 'syn-ack', 'name': 'http', 'product': 'Microsoft IIS httpd', 'version': '7.5', 'extrainfo': '', 'conf': '10', 'cpe': 'cpe:/o:microsoft:windows'}, 443: {'state': 'open', 'reason': 'syn-ack', 'name': 'http', 'product': 'Microsoft IIS httpd', 'version': '7.5', 'extrainfo': '', 'conf': '10', 'cpe': 'cpe:/o:microsoft:windows'}, 3389: {'state': 'open', 'reason': 'syn-ack', 'name': 'rdp', 'product': 'Microsoft Terminal Services', 'version': '', 'extrainfo': '', 'conf': '10', 'cpe': 'cpe:/o:microsoft:windows'}}}}}
+    s_ports = _port._nmap_scan(task[0])
+    # s_ports = {'nmap': {'command_line': 'nmap -oX - -sV -p 80,443,3389 123.31.41.27', 'scaninfo': {'tcp': {'method': 'connect', 'services': '80,443,3389'}}, 'scanstats': {'timestr': 'Mon Feb 17 01:31:07 2020', 'elapsed': '13.03', 'uphosts': '1', 'downhosts': '0', 'totalhosts': '1'}}, 'scan': {'123.31.41.27': {'hostnames': [{'name': 'static.vnpt.vn', 'type': 'PTR'}], 'addresses': {'ipv4': '123.31.41.27'}, 'vendor': {}, 'status': {'state': 'up', 'reason': 'syn-ack'}, 'tcp': {80: {'state': 'open', 'reason': 'syn-ack', 'name': 'http', 'product': 'Microsoft IIS httpd', 'version': '7.5', 'extrainfo': '', 'conf': '10', 'cpe': 'cpe:/o:microsoft:windows'}, 443: {'state': 'open', 'reason': 'syn-ack', 'name': 'http', 'product': 'Microsoft IIS httpd', 'version': '7.5', 'extrainfo': '', 'conf': '10', 'cpe': 'cpe:/o:microsoft:windows'}, 3389: {'state': 'open', 'reason': 'syn-ack', 'name': 'rdp', 'product': 'Microsoft Terminal Services', 'version': '', 'extrainfo': '', 'conf': '10', 'cpe': 'cpe:/o:microsoft:windows'}}}}}
     logging.debug(s_ports)
     if s_ports is None or s_ports["scan"][task[0]]["tcp"] is None:
         return {"status":"no port open"}
@@ -334,13 +335,13 @@ def excute_task():
         with ThreadPoolExecutor(max_workers=5) as executor:
             future = {executor.submit(do_task, task) for task in tasks}
 
-
+@app.route("/idcs/vuln/update", methods = ['POST'])
 def check_update():
     time_now = datetime.now()
     date = time_now.date()
-    if date == 1:
+    # if date == 1:
         # update to db
-        result = _vuln._update_vuln_from_file(conn, _config.location)
+    result = _vuln._update_vuln_from_file(conn, _config.location)
 
 #
 #  
