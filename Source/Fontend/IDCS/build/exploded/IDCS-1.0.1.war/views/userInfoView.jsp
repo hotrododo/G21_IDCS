@@ -66,7 +66,7 @@
                     <div class="col-xs-12 col-md-9 user-body-layout">
                         <div class="row header-bar">
                             <div class="header-bar-accessible">
-                                <form method="POST" action="/signout">
+                                <form method="POST" action="/idcs/signout">
                                     <button class="btn-hide-side-menu"><i class="fas fa-eye-slash"></i></button>
                                     <button type="submit" class="col-md-2 btn-header-logout"><i class="fas fa-sign-out-alt"></i>Logout</i></button>
                                 </form>

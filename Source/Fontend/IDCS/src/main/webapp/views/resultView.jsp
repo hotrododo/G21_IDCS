@@ -4,9 +4,7 @@
     Author     : mac
 --%>
 
-<%@page import="java.util.stream.Collectors"%>
-<%@page import="java.util.Collections"%>
-<%@page import="java.util.ArrayList"%>
+
 <%@page import="java.util.List"%>
 <%@page import="org.json.JSONObject"%>
 <!DOCTYPE html>
