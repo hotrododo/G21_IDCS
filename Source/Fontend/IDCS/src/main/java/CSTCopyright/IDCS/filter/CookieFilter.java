@@ -56,8 +56,8 @@ public class CookieFilter implements Filter{
         String checked = (String) session.getAttribute("COOKIE_CHECKED");
         if (checked == null && conn != null) {
             String userName = MyUtils.getUserNameInCookie(req);
-            UserAccount user = DBUtils.findUser(conn, userName);
-            MyUtils.storeLoginedUser(session, user);
+//            UserAccount user = DBUtils.findUser(conn, userName);
+//            MyUtils.storeLoginedUser(session, user);
             // Mark checked Cookies.
             session.setAttribute("COOKIE_CHECKED", "CHECKED");
         }

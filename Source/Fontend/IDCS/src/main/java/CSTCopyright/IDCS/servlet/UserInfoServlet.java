@@ -6,7 +6,6 @@
 package CSTCopyright.IDCS.servlet;
 
 import CSTCopyright.IDCS.model.UserAccount;
-import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
 import java.sql.Connection;
@@ -46,9 +45,7 @@ public class UserInfoServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        Connection conn = MyUtils.getStoredConnection(request);
-        UserAccount user = DBUtils.findUser(conn, loginedUser.getUserName());
-        request.setAttribute("user", user);
+        request.setAttribute("user", loginedUser);
         request.setAttribute("uds", "1"); //set user-display-state = 1
         request.setAttribute("mess", "");
         RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/views/userInfoView.jsp");

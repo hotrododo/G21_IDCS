@@ -5,18 +5,20 @@
  */
 package CSTCopyright.IDCS.servlet;
 
-import CSTCopyright.IDCS.controller.DataSecure;
+import CSTCopyright.IDCS.model.MyObject;
 import CSTCopyright.IDCS.model.UserAccount;
+import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.HttpRequestUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
+import com.google.gson.Gson;
 import java.io.IOException;
-import java.sql.Connection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.json.JSONObject;
 
 /**
  *
@@ -91,7 +93,13 @@ public class LoginServlet extends HttpServlet {
             hasError = true;
             errorString = "Required username and password!";
         } else {
-            user = HttpRequestUtils.VerifyUser(userName, password);
+//            user = HttpRequestUtils.VerifyUser(userName, password);
+            MyObject mobj = DBUtils.VerifyUser(userName, password);
+            if(mobj.getCode()==202){
+                JSONObject jUser = mobj.getObj();
+                Gson gson = new Gson();
+                user = gson.fromJson(jUser.toString(), UserAccount.class);
+            }
             if (user.getUserName() == null) {
                 hasError = true;
                 errorString = "User Name or password invalid";

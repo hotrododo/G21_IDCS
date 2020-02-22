@@ -89,13 +89,9 @@
     </filter-mapping>-->
     
  
-    <filter-mapping>
+<!--    <filter-mapping>
         <filter-name>CookieFilter</filter-name>
         <url-pattern>/login</url-pattern>
-    </filter-mapping>
-    
-<!--    <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
     </filter-mapping>-->
+    
 </web-app>

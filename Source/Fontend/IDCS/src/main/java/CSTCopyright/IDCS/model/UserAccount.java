@@ -5,8 +5,6 @@
  */
 package CSTCopyright.IDCS.model;
 
-import java.sql.Date;
-
 /**
  *
  * @author mac

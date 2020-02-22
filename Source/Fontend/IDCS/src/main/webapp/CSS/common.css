@@ -326,13 +326,10 @@ footer {
 }
 
 .services-tab{
-    width: 50%;
-    min-width: 50%;
     padding: 10pt;
     border-right: solid 1px #a0a0a0
 }
 .suggestion-tab{
-    width: 50%;
     padding: 10pt;
 }
 .services-panel{
@@ -368,6 +365,7 @@ footer {
     font-size: 10pt;
 }
 .service-line{
+    padding-top: 5pt;
     border-bottom: solid 1px #a0a0a0
 }
 .navi-link button{

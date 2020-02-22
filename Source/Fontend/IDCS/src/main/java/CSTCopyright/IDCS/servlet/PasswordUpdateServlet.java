@@ -5,12 +5,10 @@
  */
 package CSTCopyright.IDCS.servlet;
 
-import CSTCopyright.IDCS.controller.DataSecure;
 import CSTCopyright.IDCS.model.UserAccount;
 import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -53,21 +51,21 @@ public class PasswordUpdateServlet extends HttpServlet {
         UserAccount user = loginedUser;
         String mess = "";
         boolean hasError = false;
-        if(!user.getPassword().equals(DataSecure.MD5Generate(oldpassword))){
-            mess = "Wrong Password!";
-            hasError = true;
-        } else if(!newpassword.equals(repassword)){
-            mess = "New Password Not Match! Attention: Remember your new Password!";
-            hasError = true;
-        }
-        if(!hasError){
-            user.setPassword(DataSecure.MD5Generate(newpassword));
-            Connection conn = MyUtils.getStoredConnection(request);
-            boolean isUpdated = DBUtils.updateUserPassword(conn, user);
-            if(isUpdated){
-                mess = "Password Update Successful!";
-            }else mess = "Failed to Change Password!";
-        }
+//        if(!user.getPassword().equals(DataSecure.MD5Generate(oldpassword))){
+//            mess = "Wrong Password!";
+//            hasError = true;
+//        } else if(!newpassword.equals(repassword)){
+//            mess = "New Password Not Match! Attention: Remember your new Password!";
+//            hasError = true;
+//        }
+//        if(!hasError){
+//            user.setPassword(DataSecure.MD5Generate(newpassword));
+//            Connection conn = MyUtils.getStoredConnection(request);
+//            boolean isUpdated = DBUtils.updateUserPassword(conn, user);
+//            if(isUpdated){
+//                mess = "Password Update Successful!";
+//            }else mess = "Failed to Change Password!";
+//        }
         request.setAttribute("mess", mess);
         request.setAttribute("user", user);
         request.setAttribute("uds", "5"); //set user-display-state = 1

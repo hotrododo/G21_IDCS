@@ -4,15 +4,16 @@
     Author     : mac
 --%>
 
-<%@page import="CSTCopyright.IDCS.controller.VultModel"%>
-<%@page import="CSTCopyright.IDCS.controller.ServiceModel"%>
+<%@page import="java.util.stream.Collectors"%>
+<%@page import="java.util.Collections"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
-<%@page import="CSTCopyright.IDCS.controller.PortModel"%>
+<%@page import="org.json.JSONObject"%>
 <!DOCTYPE html>
 <html lang="en">
 
     <head>
-        <title>REGISTRATION</title>
+        <title>Home - Internet-connected Devices Checking System</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="../${pageContext.request.contextPath}/IMG/favicon.png">
@@ -22,11 +23,7 @@
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/style.css">
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/mobie-css.css">
     </head>
-    <%
-        String errorMess = new String();
-        errorMess = (String)request.getAttribute("errorMess");
-    %>
-    <body class="page_result" onload="hasErrorAlert('${errorMess}')">
+    <body class="page_result">
         <header class="header">
             <div class="container-fluid">
                 <div class="row">
@@ -51,7 +48,11 @@
 
         </header>
         <main>
-
+            <%
+                JSONObject host = (JSONObject) request.getAttribute("host");
+                JSONObject ports = host.getJSONObject("ports");
+                List<String> list_port = (List<String>) request.getAttribute("list_port");
+            %>
             <div class="box-result">
                 <div class="container-fluid">
                     <div class="row">
@@ -59,31 +60,31 @@
                             <div class="child-box-result">
                                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29793.98038436799!2d105.81945407847766!3d21.022778763266096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab9bd9861ca1%3A0xe7887f7b72ca17a9!2zSMOgIE7hu5lpLCBIb8OgbiBLaeG6v20sIEjDoCBO4buZaSwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1574326595861!5m2!1svi!2s"
                                         width="100%" height="250" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
-                                <h4><i class="fas fa-globe-americas"></i>${host.getDDNS()}</h4>
+                                <h4><i class="fas fa-globe-americas"></i><%=host.getString("dns")%></h4>
                                 <div class="host-info-tab">
                                     <div class="row">
                                         <p class="col-md-4">IPv4</p>
-                                        <p class="col-md-7">${host.getIPv4()}</p>
+                                        <p class="col-md-7"><%=host.getString("ipv4")%></p>
                                     </div>
                                     <div class="row">
                                         <p class="col-md-4">Country</p>
-                                        <p class="col-md-7">${host.getCOUNTRY()}</p>
+                                        <p class="col-md-7"><%=host.getString("country")%></p>
                                     </div>
                                     <div class="row">
                                         <p class="col-md-4">Orgranzation</p>
-                                        <p class="col-md-7">${host.getNETNAME()}</p>
+                                        <p class="col-md-7"><%=host.getString("oraganization")%></p>
                                     </div>
                                     <div class="row">
                                         <p class="col-md-4">ISP</p>
-                                        <p class="col-md-7">${host.getDESCR()}</p>
+                                        <p class="col-md-7"><%=host.getString("net_name")%></p>
                                     </div>
                                     <div class="row">
                                         <p class="col-md-4">Last Update</p>
-                                        <p class="col-md-7">${host.getDATESCAN()}</p>
+                                        <p class="col-md-7"><%=host.getString("last_updated")%></p>
                                     </div>
                                     <div class="row">
-                                        <p class="col-md-4">ASN</p>
-                                        <p class="col-md-7">${host.getPERSON()}</p>
+                                        <p class="col-md-4">IPv6</p>
+                                        <p class="col-md-7"><%=host.getString("ipv6")%></p>
                                     </div>
                                 </div>
                                 <h4>
@@ -107,12 +108,11 @@
 
                             <div class="child-box-result">
                                 <h4><i class="fas fa-exclamation-triangle"></i> PORT</h4>
-                                <form class="list_port" method="POST" id="form1" action="result">
+                                <form class="list_port" id="form1" >
                                     <%
-                                        List<PortModel> ports = (List<PortModel>) request.getAttribute("ports");
-                                        for (PortModel p : ports) {
+                                        for (String port : list_port) {
                                     %>
-                                    <button type="submit" name="port" form="form1" id="port" value="<%= p.getPORTNUM()%>"><%= p.getPORTNUM()%></button>
+                                    <button type="submit" name="port" form="form1" id="port" value="<%= port%>"><%= port%></button>
                                     <%
                                         }
                                     %>
@@ -125,48 +125,101 @@
 
 
                                     <%
-                                        List<ServiceModel> services = (List<ServiceModel>) request.getAttribute("services");
-                                        if (services != null) {
-                                            for (ServiceModel serv : services) {
-                                                if (serv != null) {
+                                        for (String port : list_port) {
+                                            String version = "";
+                                            String cpe = "";
+                                            String service_name = ports.getJSONObject(port).getString("service_name");
+                                            String status = ports.getJSONObject(port).getString("status");
+                                            version = ports.getJSONObject(port).getString("version");
+                                            cpe = ports.getJSONObject(port).getString("cpe");
+                                            String os = "";
+                                            String app = "";
+                                            String hp = "";
+                                            if(cpe != null && cpe != ""){
+                                                String[] s_part = cpe.split(":");
+                                                if(s_part[1] == "/o"){
+                                                    os = s_part[2] + " " + s_part[3];
+                                                } else if(s_part[1] == "/a"){
+                                                    app = s_part[2] + " " + s_part[3];
+                                                } else{
+                                                    hp = s_part[2] + " " + s_part[3];
+                                                }
+                                            }
                                     %>
                                     <div class="service-line">
-                                        <h4><%=serv.getPORTNUM()%></h4>
-                                        <%
-                                            for (PortModel port : ports) {
-                                                if (port.getPORTNUM().equals(serv.getPORTNUM())) {
-                                        %>
-                                        <p><%=port.getNAME()%></p>
-                                        <p><%=port.getCPE()%></p>
-                                        <p><%=port.getEXTRALINFO()%></p>
-                                        <p><%=port.getPRODUCT()%></p>
-                                        <p><%=port.getVERSION()%></p>
-
-                                        <div class="services-result">
-                                            <div class="col-md-6 services-tab">
-                                                <p><%=serv.getSCRIPT()%></p>
+                                        <h4><%=ports.getJSONObject(port).getInt("port_num")%></h4>
+                                        <div class="row" style="max-width: 98%;">
+                                            <div>
+                                                <div class="col-6">Service</div>
+                                                <div class="col-6">
+                                                    <p><%=service_name%></p>
+                                                </div>
                                             </div>
-                                            <div class="col-md-6 suggestion-tab">
-                                                <%
-                                                    List< VultModel> list = (List<VultModel>) request.getAttribute("listVult");
-
-                                                    if (list != null) {
-                                                        for (VultModel vult : list) {
-                                                            if (port.getNAME().equals(vult.getVultObj())
-                                                                    && serv.getSCRIPT().toLowerCase().contains(vult.getVultDes().toLowerCase())) {%>
-                                                <p style="color: red;"><%=vult.getVultRem()%></p>
-                                                <%}
-                                                        }
-                                                    }%> 
+                                            <div>
+                                                <div class="col-6">Status</div>
+                                                <div class="col-6">
+                                                    <p><%=status%></p>
+                                                </div>
                                             </div>
+                                            <%
+                                                if(version != null && version != ""){
+                                            %>
+                                            <div>
+                                                <div class="col-6">Version</div>
+                                                <div class="col-6">
+                                                    <p><%=version%></p>
+                                                </div>
+                                            </div>
+                                            <%}%>
+                                            <%
+                                                if(os != null && os != ""){
+                                            %>
+                                            <div>
+                                                <div class="col-6">Operating System</div>
+                                                <div class="col-6">
+                                                    <p><%=os%></p>
+                                                </div>
+                                            </div>
+                                            <%}%>
+                                            <%
+                                                if(app != null && app != ""){
+                                            %>
+                                            <div>
+                                                <div class="col-6">Application</div>
+                                                <div class="col-6">
+                                                    <p><%=app%></p>
+                                                </div>
+                                            </div>
+                                            <%}%>
+                                            <%
+                                                if(hp != null && hp != ""){
+                                            %>
+                                            <div>
+                                                <div class="col-6">Hardware Platforms</div>
+                                                <div class="col-6">
+                                                    <p><%=hp%></p>
+                                                </div>
+                                            </div>
+                                            <%}%>
                                         </div>
-                                        <%}
-                                            }%>
+                                        <div class="services-result">
+                                            <%
+                                                JSONObject vuln = ports.getJSONObject(port).getJSONObject("vuln");
+                                                if (vuln != null && vuln.keySet() != null) {
+                                                    for (String cve_num : vuln.keySet()) {
+                                                        String cve_dest = vuln.getJSONObject(cve_num).getString("cve_desc");
+                                            %>
+                                            <div class="col-md-3 services-tab">
+                                                <p style="color: red;"><%=cve_num%></p>
+                                            </div>
+                                            <div class="col-md-9 suggestion-tab">
+                                                <p style="color: white;"><%=cve_dest%></p>
+                                            </div>
+                                            <%}
+                                                    }%>
+                                        </div>
                                     </div>
-                                    <%}
-                                            }
-                                        }%>
-
+                                    <%}%>
                                 </div>
                             </div>
                         </div>

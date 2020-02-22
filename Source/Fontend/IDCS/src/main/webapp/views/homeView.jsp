@@ -50,17 +50,17 @@
                                 <div class="content-box">
                                     <h3><i class="far fa-clock"></i> Last Check</h3>
                                     <div class="col-md-12 cont-result">
-                                        <button class="row" type="submit" name="history" value="${latestRecord.getTARGET()}">
-                                            <a>${latestRecord.getTARGET()}</a>
+                                        <button class="row" type="submit" name="history" value="">
+                                            <a>Test A</a>
                                         </button>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <p>DDNS:</p>
-                                                <p>${latestRecord.getDDNS()}</p>
+                                                <p>AAAAAAAAA</p>
                                                 <p>Net Name:</p>
-                                                <p>${latestRecord.getNETNAME()}</p>
+                                                <p>AAAAAAAAA</p>
                                                 <p>Scan Date:</p>
-                                                <p>${latestRecord.getDATESCAN()}</p>
+                                                <p>AAAAAAAAA</p>
                                             </div>
                                         </div>
 
@@ -73,17 +73,17 @@
                                 <div class="content-box">
                                     <h3><i class="fas fa-chart-line"></i> Top Check</h3>
                                     <div class="col-md-12 cont-result">
-                                        <button class="row" type="submit" name="history" value="${mostRecord.getTARGET()}">
-                                            <a>${mostRecord.getTARGET()}</a>
+                                        <button class="row" type="submit" name="history" value="">
+                                            <a>Test B</a>
                                         </button>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <p class="row">DDNS:</p>
-                                                <p class="row">${mostRecord.getDDNS()}</p>
+                                                <p class="row">BBBBBBBBBB</p>
                                                 <p class="row">Net Name:</p>
-                                                <p class="row">${mostRecord.getNETNAME()}</p>
+                                                <p class="row">BBBBBBBBBB</p>
                                                 <p class="row">Scan Date:</p>
-                                                <p class="row">${mostRecord.getDATESCAN()}</p>
+                                                <p class="row">BBBBBBBBBB</p>
                                             </div>
                                         </div>
                                     </div>
@@ -96,17 +96,17 @@
                                 <div class="content-box">
                                     <h3><i class="fas fa-binoculars"></i> View Report</h3>
                                     <div class="col-md-12 cont-result">
-                                        <button class="row" type="submit" name="history" value="${mostRecord.getTARGET()}">
-                                            <a>${mostRecord.getTARGET()}</a>
+                                        <button class="row" type="submit" name="history" value="">
+                                            <a>Test C</a>
                                         </button>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <p class="row">DDNS:</p>
-                                                <p class="row">${mostRecord.getDDNS()}</p>
+                                                <p class="row">CCCCCCCCCCC</p>
                                                 <p class="row">Net Name:</p>
-                                                <p class="row">${mostRecord.getNETNAME()}</p>
+                                                <p class="row">CCCCCCCCCCC</p>
                                                 <p class="row">Scan Date:</p>
-                                                <p class="row">${mostRecord.getDATESCAN()}</p>
+                                                <p class="row">CCCCCCCCCCC</p>
                                             </div>
                                         </div>
                                     </div>
@@ -120,17 +120,17 @@
                                 <div class="content-box">
                                     <h3><i class="fas fa-file-export"></i> Export Report</h3>
                                     <div class="cont-result">
-                                        <button class="row" type="submit" name="history" value="${mostRecord.getTARGET()}">
-                                            <a>${mostRecord.getTARGET()}</a>
+                                        <button class="row" type="submit" name="history" value="">
+                                            <a>Test D</a>
                                         </button>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <p class="row">DDNS:</p>
-                                                <p class="row">${mostRecord.getDDNS()}</p>
+                                                <p class="row">DDDDDDDDDDDD</p>
                                                 <p class="row">Net Name:</p>
-                                                <p class="row">${mostRecord.getNETNAME()}</p>
+                                                <p class="row">DDDDDDDDDDDD</p>
                                                 <p class="row">Scan Date:</p>
-                                                <p class="row">${mostRecord.getDATESCAN()}</p>
+                                                <p class="row">DDDDDDDDDDDD</p>
                                             </div>
                                         </div>
                                     </div>

@@ -11,7 +11,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>User self-manage </title>
         <link rel="stylesheet" href="../${pageContext.request.contextPath}/CSS/userInfo.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -66,7 +66,7 @@
                     <div class="col-xs-12 col-md-9 user-body-layout">
                         <div class="row header-bar">
                             <div class="header-bar-accessible">
-                                <form method="POST" action="/signout">
+                                <form method="POST" action="/idcs/signout">
                                     <button class="btn-hide-side-menu"><i class="fas fa-eye-slash"></i></button>
                                     <button type="submit" class="col-md-2 btn-header-logout"><i class="fas fa-sign-out-alt"></i>Logout</i></button>
                                 </form>
@@ -148,7 +148,7 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <%
-                                                            if (user.isGender()) {
+                                                            if (user.getGender() == 1) {
                                                         %>
                                                         <p>Male</p>
                                                         <%
@@ -164,23 +164,23 @@
                                             <div class="col-md-12">
                                                 <div class="row user-info-tab-row">
                                                     <div class="col-md-4">
-                                                        <p>Usage:</p>
+                                                        <p>Credits:</p>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <p><%=user.getUseCount()%> time per day</p>
+                                                        <p>You have <%=user.getCredits()%> time per month</p>
                                                     </div>
                                                 </div>
                                                 <div class="row user-info-tab-row">
                                                     <div class="col-md-4">
-                                                        <p>Date Expiry:</p>
+                                                        <p>User Type:</p>
                                                     </div>
                                                     <div class="col-md-8">
                                                         <%
-                                                            long millis = System.currentTimeMillis();
-                                                            long expDate = user.getExpiryDate().getTime();
-                                                            long dateScan = TimeUnit.DAYS.convert(expDate - millis, TimeUnit.MILLISECONDS);
-                                                        %>
-                                                        <p><%=dateScan%> days left</p>
+//                                                            long millis = System.currentTimeMillis();
+//                                                            long expDate = user.getExpiryDate().getTime();
+//                                                            long dateScan = TimeUnit.DAYS.convert(expDate - millis, TimeUnit.MILLISECONDS);
+//                                                        %>
+                                                        <p><%=user.getUserType()%> days left</p>
                                                     </div>
                                                 </div>
                                             </div>

@@ -9,7 +9,6 @@ import CSTCopyright.IDCS.model.UserAccount;
 import CSTCopyright.IDCS.utils.DBUtils;
 import CSTCopyright.IDCS.utils.MyUtils;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -56,13 +55,13 @@ public class UserUpdateServlet extends HttpServlet {
         user.setPhoneNumber(phone);
         user.setAddress(address);
         Connection conn = MyUtils.getStoredConnection(request);
-        boolean isUpdated = DBUtils.updateUser(conn, user);
+//        boolean isUpdated = DBUtils.updateUser(conn, user);
         String mess = "";
-        if(isUpdated){
-            mess = "Update Successful";
-        }else{
-            mess = "Update Failed!";
-        }
+//        if(isUpdated){
+//            mess = "Update Successful";
+//        }else{
+//            mess = "Update Failed!";
+//        }
         request.setAttribute("mess", mess);
         request.setAttribute("user", user);
         request.setAttribute("uds", "1"); //set user-display-state = 1
