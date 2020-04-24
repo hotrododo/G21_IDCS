@@ -59,3 +59,18 @@ def _update_user_type(conn, user):
     sql_string = "UPDATE user_tbl SET user_type = %s WHERE user_name = %s"
     result = _sql._excute_without_return(conn, sql_string, tuple([user["userType"], user["userName"]]))
     return result
+
+def _get_credits(conn, user_name):
+    sql_string = """SELECT credits FROM user_tbl WHERE user_name = %s"""
+    result = _sql._get_an_item(conn, sql_string, tuple([user_name]))
+    return result
+
+def _update_credits(conn, user_name, _credits):
+    sql_string = """UPDATE user_tbl SET credits = %s WHERE user_name = %s"""
+    result = _sql._excute_without_return(conn, sql_string, tuple([_credits, user_name]))
+    return result
+
+def _get_by_email(conn, email):
+    sql_string = """SELECT user_name FROM user_tbl WHERE email = %s"""
+    result = _sql._get_an_item(conn, sql_string, tuple([email]))
+    return result

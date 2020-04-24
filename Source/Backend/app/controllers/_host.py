@@ -29,9 +29,9 @@ def add_host_to_db(conn, host):
     host_stamp = _get_by_ip(conn, host)
     if host_stamp is None:
             # sql_string = "INSERT INTO host_tbl(ipv4,ipv6,dns,net_name,country,oraganization,asn,last_updated)"
-        sql_string = "INSERT INTO host_tbl(%s,%s,%s,%s,%s,%s,%s) \
-            VALUE(%s,%s,%s,%s,%s,%s,%s)"
-    result = _sql._excute_without_return(conn, sql_string, tuple([*host, *host.values()]))
+        sql_string = "INSERT INTO host_tbl(ipv4,ipv6,dns,net_name,country,oraganization,last_updated) \
+            VALUES(%s,%s,%s,%s,%s,%s,%s)"
+    result = _sql._excute_without_return(conn, sql_string, tuple([*host.values()]))
     return result
 
 

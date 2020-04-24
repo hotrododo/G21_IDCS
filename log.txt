@@ -1,4 +1,17 @@
-2020-02-17 03:23:00,904:	_internal.py:_log():122	 * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
-2020-02-17 03:30:20,413:	_internal.py:_log():122	127.0.0.1 - - [17/Feb/2020 03:30:20] "POST /idcs/user/verify HTTP/1.1" 202 -
-2020-02-17 04:48:14,435:	_internal.py:_log():122	127.0.0.1 - - [17/Feb/2020 04:48:14] "POST /idcs/user/verify HTTP/1.1" 202 -
-2020-02-17 04:54:09,477:	_internal.py:_log():122	127.0.0.1 - - [17/Feb/2020 04:54:09] "POST /idcs/user/verify HTTP/1.1" 202 -
+2020-04-24 20:08:15,904:	_internal.py:_log():122	 * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+2020-04-24 20:08:37,391:	idcs.py:do_task():236	{'nmap': {'command_line': 'nmap -oX - -sn --script whois-ip 123.31.41.27', 'scaninfo': {}, 'scanstats': {'timestr': 'Fri Apr 24 20:08:36 2020', 'elapsed': '0.43', 'uphosts': '1', 'downhosts': '0', 'totalhosts': '1'}}, 'scan': {'123.31.41.27': {'hostnames': [{'name': 'static.vnpt.vn', 'type': 'PTR'}], 'addresses': {'ipv4': '123.31.41.27'}, 'vendor': {}, 'status': {'state': 'up', 'reason': 'echo-reply'}, 'hostscript': [{'id': 'whois-ip', 'output': 'ERROR: Script execution failed (use -d to debug)'}]}}}
+2020-04-24 20:08:40,138:	idcs.py:do_task():242	Fail to scan hostERROR: Script execution failed (use -d to debug)
+2020-04-24 20:08:41,151:	app.py:log_exception():1890	Exception on /idcs/task/excute [POST]
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/flask/app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    return self.finalize_request(rv)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/flask/app.py", line 1967, in finalize_request
+    response = self.make_response(rv)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/flask/app.py", line 2096, in make_response
+    raise TypeError(
+TypeError: The view function did not return a valid response. The function either returned None or ended without a return statement.
+2020-04-24 20:08:41,168:	_internal.py:_log():122	127.0.0.1 - - [24/Apr/2020 20:08:41] "POST /idcs/task/excute HTTP/1.1" 500 -
+2020-04-24 20:34:55,256:	_internal.py:_log():122	127.0.0.1 - - [24/Apr/2020 20:34:55] "POST /idcs/user/verify HTTP/1.1" 202 -
+2020-04-24 20:37:11,550:	_internal.py:_log():122	127.0.0.1 - - [24/Apr/2020 20:37:11] "POST /idcs/host/get HTTP/1.1" 200 -
